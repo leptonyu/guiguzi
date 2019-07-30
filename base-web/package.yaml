@@ -1,0 +1,48 @@
+_common: !include "../common.yaml"
+name:                base-web
+<<: *legal
+
+dependencies:
+  - base >= 4.10 && < 5
+  - boots
+  - wai
+  - salak
+  - data-default
+  - servant-server
+  - microlens
+  - text
+  - servant-swagger
+  - servant-swagger-ui
+  - mtl
+  - reflection
+  - swagger2
+  - unordered-containers
+  - aeson
+  - vault
+
+
+library:
+  source-dirs: src
+  exposed-modules:
+  - Base.Web
+  other-modules:
+  - Base.Web.Config
+  - Base.Web.Serve
+  - Base.Web.Swagger
+  - Base.Web.Actuator
+  - Base.Web.Middleware
+
+  - Base.Middleware.Trace
+
+  - Base.Actuator.Health
+  - Base.Actuator.Refresh
+    
+tests:
+  spec:
+    main: Spec.hs
+    source-dirs:
+      - test
+      - src
+    dependencies:
+      - hspec == 2.*
+      - QuickCheck < 2.14

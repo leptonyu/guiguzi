@@ -1,0 +1,24 @@
+_common: !include "../common.yaml"
+name:                base-main
+<<: *legal
+
+dependencies:
+  - base >= 4.10 && < 5
+  - boots
+  - wai
+  - salak
+  - data-default
+  - servant-server
+  - microlens
+  - text
+  - servant-swagger
+  - reflection
+  - warp
+  - vault
+  - base-web
+
+
+library:
+  source-dirs: src
+  exposed-modules:
+  - Base.Main

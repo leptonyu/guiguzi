@@ -1,0 +1,10 @@
+resolver: nightly-2019-07-30
+packages:
+- base-web
+- base-main
+extra-deps:
+- ../salak/salak
+nix:
+  packages:
+  - zlib
+  - lzma

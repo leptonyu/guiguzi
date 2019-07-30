@@ -1,0 +1,27 @@
+- &legal
+  version:             0
+  homepage:            https://github.com/leptonyu/guiguzi#readme
+  license:             MIT
+  author:              Daniel YU
+  maintainer:          Daniel YU <leptonyu@gmail.com>
+  copyright:           2019 Daniel YU
+  category:            AllInOne 
+  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
+  default-extensions:
+    - RankNTypes
+    - TypeOperators
+    - FlexibleInstances
+    - MultiParamTypeClasses
+    - OverloadedStrings
+    - TypeApplications
+    - RecordWildCards
+    - ScopedTypeVariables
+    - DuplicateRecordFields
+    - AllowAmbiguousTypes
+    - DataKinds
+    - FlexibleContexts
+    - DeriveGeneric
+    - DeriveAnyClass
+    - KindSignatures
+    - TypeFamilies
+

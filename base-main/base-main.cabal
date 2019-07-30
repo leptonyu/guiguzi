@@ -1,0 +1,42 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: a1422f215e49da5a449b22552995f7d8d9fea0e6034c14dd78963d1674005698
+
+name:           base-main
+version:        0
+category:       AllInOne
+homepage:       https://github.com/leptonyu/guiguzi#readme
+author:         Daniel YU
+maintainer:     Daniel YU <leptonyu@gmail.com>
+copyright:      2019 Daniel YU
+license:        MIT
+build-type:     Simple
+
+library
+  exposed-modules:
+      Base.Main
+  other-modules:
+      Paths_base_main
+  hs-source-dirs:
+      src
+  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies
+  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
+  build-depends:
+      base >=4.10 && <5
+    , base-web
+    , boots
+    , data-default
+    , microlens
+    , reflection
+    , salak
+    , servant-server
+    , servant-swagger
+    , text
+    , vault
+    , wai
+    , warp
+  default-language: Haskell2010

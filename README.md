@@ -1,3 +1,22 @@
-# 鬼谷子
+# 鬼谷子, A Haskell Application Project.
 
-### A haskell project
+
+### Buildin functions 
+
+- [boots](https://hackage.haskell.org/package/boots) Based
+- Configuration load and reload, by [salak](https://hackage.haskell.org/package/salak)
+- Logger
+- Web
+  - [Servant](https://hackage.haskell.org/package/servant-server) Based
+  - [Swagger](https://hackage.haskell.org/package/servant-swagger)
+  - [OpenTracing](https://github.com/leptonyu/guiguzi/tree/master/opentracing)
+  - Actuators
+    - Health Check, allow extensions.
+    - Refresh Configuration, by [salak](https://hackage.haskell.org/package/salak).
+    - TODO
+- Database with health check
+  - [PostgreSQL](https://hackage.haskell.org/package/persistent-postgresql)
+  - [SQLite](https://hackage.haskell.org/package/persistent-sqlite)
+- [Redis](https://hackage.haskell.org/package/hedis) with health check
+- [Http Client](https://hackage.haskell.org/package/http-client)
+- TODO

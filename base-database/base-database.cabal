@@ -4,9 +4,9 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9ddb49f4a7459be4c21418630f89e51ed687c9d5c05b0fc9a4aa7c32ec93bb13
+-- hash: 78440fc5140313ff861e43af6bf801f0972c1b8176672231f561e2396c87a8a9
 
-name:           base-main
+name:           base-database
 version:        0
 category:       AllInOne
 homepage:       https://github.com/leptonyu/guiguzi#readme
@@ -18,21 +18,23 @@ build-type:     Simple
 
 library
   exposed-modules:
-      Base.Main
+      Base.Database
   other-modules:
-      Paths_base_main
+      Paths_base_database
   hs-source-dirs:
       src
   default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
       base >=4.10 && <5
-    , base-database
-    , base-web
     , boots
     , data-default
     , microlens
+    , monad-logger
+    , persistent
+    , persistent-postgresql
+    , persistent-sqlite
+    , resource-pool
     , salak
-    , servant-server
-    , wai
+    , unliftio-core
   default-language: Haskell2010

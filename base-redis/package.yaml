@@ -1,19 +1,17 @@
 _common: !include "../common.yaml"
-name:                base-main
+name:                base-redis
 <<: *legal
 
 dependencies:
   - base >= 4.10 && < 5
   - boots
-  - wai
   - salak
-  - data-default
-  - servant-server
   - microlens
-  - base-web
-  - base-database
+  - data-default
+  - hedis
+
 
 library:
   source-dirs: src
   exposed-modules:
-  - Base.Main
+  - Base.Redis

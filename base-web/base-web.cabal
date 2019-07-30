@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2b52f41604e6611631af3607d93461bc735a018b01ee295fe0b578769dc3e881
+-- hash: 58bf4a011df21269cd58677ef3dccce795dcdeb4e9b9318d7006d59aa23fb676
 
 name:           base-web
 version:        0
@@ -30,15 +30,18 @@ library
       Base.Actuator.Refresh
   hs-source-dirs:
       src
-  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies
+  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
       aeson
     , base >=4.10 && <5
     , boots
     , data-default
+    , exceptions
+    , http-types
     , microlens
     , mtl
+    , opentracing
     , reflection
     , salak
     , servant-server
@@ -49,6 +52,7 @@ library
     , unordered-containers
     , vault
     , wai
+    , warp
   default-language: Haskell2010
 
 test-suite spec
@@ -68,7 +72,7 @@ test-suite spec
   hs-source-dirs:
       test
       src
-  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies
+  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
       QuickCheck <2.14
@@ -76,9 +80,12 @@ test-suite spec
     , base >=4.10 && <5
     , boots
     , data-default
+    , exceptions
     , hspec ==2.*
+    , http-types
     , microlens
     , mtl
+    , opentracing
     , reflection
     , salak
     , servant-server
@@ -89,4 +96,5 @@ test-suite spec
     , unordered-containers
     , vault
     , wai
+    , warp
   default-language: Haskell2010

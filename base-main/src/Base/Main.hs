@@ -1,20 +1,15 @@
 module Base.Main where
 
+import           Base.Database
 import           Base.Web
 import           Boots
-import           Control.Exception                   hiding (Handler)
 import           Data.Default
-import           Data.Maybe
 import           Data.Proxy
-import           Data.String
 import           Data.Version
 import           Lens.Micro
 import           Network.Wai
-import           Network.Wai.Handler.Warp
 import           Salak
 import           Servant
-import           Servant.Server.Internal.ServerError (responseServerError)
-import           Servant.Swagger
 
 data WebEnv = WebEnv
   { salak      :: SourcePack
@@ -24,7 +19,11 @@ data WebEnv = WebEnv
   , middleware :: Middleware
   , swagger    :: SwaggerProxy
   , serveWeb   :: ServeWeb '[WebEnv]
-  , natureT    :: NatureT WebEnv
+  , natureT    :: NatureT WebEnv (App WebEnv)
+
+
+  -- Db
+  , database   :: DB
   }
 
 class HasWebEnv env where
@@ -54,18 +53,11 @@ instance HasHealth WebEnv where
 instance HasMiddleware WebEnv where
   askMiddleware = lens middleware (\x y -> x { middleware = y})
 
-instance HasNatureT WebEnv WebEnv where
+instance HasNatureT WebEnv (App WebEnv) WebEnv where
   askNT = lens natureT (\x y -> x { natureT = y})
 
-whenException :: SomeException -> Network.Wai.Response
-whenException e = responseServerError $ fromMaybe err400 { errBody = fromString $ show e} (fromException e :: Maybe ServerError)
-
-serveWarp :: WebConfig -> Application -> IO ()
-serveWarp WebConfig{..} = runSettings
-  $ defaultSettings
-  & setPort (fromIntegral port)
-  & setOnException (\_ _ -> return ())
-  & setOnExceptionResponse whenException
+instance Default (NatureT WebEnv (App WebEnv)) where
+  def = NatureT $ \_ _ e -> liftIO . runAppT e
 
 start
   :: forall api
@@ -78,26 +70,10 @@ start v proxy server = boot $ do
   salak   <- pluginSalak "application"
   promote salak $ do
     config  <- require "application"
-    let proxycxt     = Proxy @'[WebEnv]
-        allActuators :: Proxy (Health :<|> Refresh)
-        allActuators = Proxy
     logfunc <- pluginLogger (name config)
-    promote (Simple salak logfunc) $ do
-      logInfo $ "Start Service [" <> name config <> "] ..."
-      env     <- promote (WebEnv salak logfunc config emptyHealth id def def def) $ do
-        ac <- require "actuator"
-        pluginTrace @WebEnv
-          >>= (`promote` actuator proxycxt allActuators ac)
-          >>= (`promote` swaggerPlugin v proxycxt proxy)
-      logInfo $ "Service started on port(s): " <> fromString (show $ port config)
-      let ServeWeb f = serveWeb env
-          NatureT nt = natureT env
-      return
-        $ serveWarp config
-        $ middleware env
-        $ f (Proxy @(Vault :> api)) (env :. EmptyContext)
-        $ \val -> hoistServerWithContext proxy proxycxt (nt val env) server
-
+    db      <- promote (Simple salak logfunc) pluginDatabase
+    promote (WebEnv salak logfunc config emptyHealth id def def def db)
+      $ pluginWeb v (Proxy @(App WebEnv)) proxy server
 
 type DemoAPI = "hello" :> Get '[PlainText] String
 

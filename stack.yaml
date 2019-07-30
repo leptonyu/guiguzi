@@ -1,10 +1,16 @@
 resolver: nightly-2019-07-30
 packages:
 - base-web
+- base-client
+- base-database
+- base-redis
 - base-main
+- opentracing
 extra-deps:
-- ../salak/salak
+- salak-0.3.2
+- boots-0.0.3
 nix:
   packages:
   - zlib
   - lzma
+  - postgresql

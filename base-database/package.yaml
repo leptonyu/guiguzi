@@ -1,0 +1,24 @@
+_common: !include "../common.yaml"
+name:                base-database
+<<: *legal
+
+dependencies:
+  - base >= 4.10 && < 5
+  - boots
+  - salak
+  - microlens
+  - data-default
+  - persistent
+  - resource-pool
+  - persistent-postgresql
+  - persistent-sqlite
+  - monad-logger
+  - unliftio-core
+  - bytestring
+  - text
+
+
+library:
+  source-dirs: src
+  exposed-modules:
+  - Base.Database

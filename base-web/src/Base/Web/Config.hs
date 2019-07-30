@@ -1,8 +1,6 @@
 module Base.Web.Config where
 
-import           Boots
-import           Data.Default
-import           Data.Text    (Text)
+import           Data.Text  (Text)
 import           Data.Word
 import           Lens.Micro
 import           Salak
@@ -28,14 +26,16 @@ class HasWebConfig env where
 instance HasWebConfig WebConfig where
   askWebConfig = id
 
+data NatureT cxt m = NatureT { unNT :: forall a. Proxy m -> Vault -> cxt -> m a -> Handler a }
 
-data NatureT cxt = NatureT { unNT :: forall a. Vault -> cxt -> App cxt a -> Handler a }
+class HasNatureT cxt m env where
+  askNT :: Lens' env (NatureT cxt m)
 
-class HasNatureT cxt env where
-  askNT :: Lens' env (NatureT cxt)
-
-instance HasNatureT cxt (NatureT cxt) where
+instance HasNatureT cxt m (NatureT cxt m) where
   askNT = id
 
-instance Default (NatureT cxt) where
-  def = NatureT $ \_ e -> liftIO . runAppT e
+modifyNT :: forall m cxt. ((Vault,cxt) -> (Vault, cxt)) -> NatureT cxt m -> NatureT cxt m
+modifyNT f (NatureT nt) = NatureT $ \p v c -> let (v1,c1) = f (v,c) in nt p v1 c1
+
+modifyNT' :: forall m cxt env. HasNatureT cxt m env => ((Vault,cxt) -> (Vault, cxt)) -> env -> env
+modifyNT' = over askNT . modifyNT @m

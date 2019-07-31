@@ -25,4 +25,5 @@
     - KindSignatures
     - TypeFamilies
     - PartialTypeSignatures
+    - ExistentialQuantification
 

@@ -6,7 +6,6 @@ import           Control.Monad.Logger.CallStack
 import           Data.ByteString                (ByteString)
 import qualified Data.ByteString                as B
 import           Data.Maybe
-import           Data.Monoid
 import           Data.Pool
 import           Data.String
 import qualified Data.Text                      as T

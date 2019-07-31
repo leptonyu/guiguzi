@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9ddb49f4a7459be4c21418630f89e51ed687c9d5c05b0fc9a4aa7c32ec93bb13
+-- hash: a63d20d5fe8a5d81c1e3eaf0552e976997d573f0edcd36b84d0f8d82574bc9c9
 
 name:           base-main
 version:        0
@@ -23,10 +23,10 @@ library
       Paths_base_main
   hs-source-dirs:
       src
-  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures
+  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures ExistentialQuantification
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
-      base >=4.10 && <5
+      base >=4.11 && <5
     , base-database
     , base-web
     , boots

@@ -1,11 +1,11 @@
 module Base.Web.Config where
 
-import           Data.Text  (Text)
+import           Data.Default
+import           Data.Text    (Text)
 import           Data.Word
 import           Lens.Micro
 import           Salak
 import           Servant
-import           Data.Default
 
 -- | Application Configuration.
 data WebConfig = WebConfig

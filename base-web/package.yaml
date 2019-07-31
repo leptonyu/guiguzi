@@ -29,6 +29,7 @@ library:
   source-dirs: src
   exposed-modules:
   - Base.Web
+  - Base.Web.Types
   other-modules:
   - Base.Web.Config
   - Base.Web.Serve

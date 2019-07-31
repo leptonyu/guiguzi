@@ -5,6 +5,7 @@ import           Data.Word
 import           Lens.Micro
 import           Salak
 import           Servant
+import           Data.Default
 
 -- | Application Configuration.
 data WebConfig = WebConfig
@@ -13,11 +14,15 @@ data WebConfig = WebConfig
   , port     :: Word16 -- ^ Application http port.
   } deriving (Eq, Show)
 
+instance Default WebConfig where
+  def = WebConfig "application" "localhost" 8888
+
+
 instance Monad m => FromProp m WebConfig where
   fromProp = WebConfig
-    <$> "name" .?= "application"
-    <*> "host" .?= "localhost"
-    <*> "port" .?= 8888
+    <$> "name" .?: name
+    <*> "host" .?: hostname
+    <*> "port" .?: port
 
 
 class HasWebConfig env where

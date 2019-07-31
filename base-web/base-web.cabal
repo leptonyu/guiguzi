@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 3f5845c9bdd1035d5663a9d107267ec7aa6b2cbb9c0b0b4c03d85d9e0bb4b547
+-- hash: 7ef1a836a2fb522abfda872a8466d3ad5c6ac1b92662df6a3160ff34dcdd89f5
 
 name:           base-web
 version:        0
@@ -19,6 +19,7 @@ build-type:     Simple
 library
   exposed-modules:
       Base.Web
+      Base.Web.Types
   other-modules:
       Base.Web.Config
       Base.Web.Serve

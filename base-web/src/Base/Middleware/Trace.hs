@@ -4,6 +4,7 @@ import           Base.Web.Config
 import           Base.Web.Middleware
 import           Boots
 import           Control.Monad.IO.Class
+import           Data.Monoid
 import           Data.Opentracing
 import           Data.Proxy
 import qualified Data.Text              as T

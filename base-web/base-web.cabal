@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 58bf4a011df21269cd58677ef3dccce795dcdeb4e9b9318d7006d59aa23fb676
+-- hash: 3f5845c9bdd1035d5663a9d107267ec7aa6b2cbb9c0b0b4c03d85d9e0bb4b547
 
 name:           base-web
 version:        0
@@ -68,6 +68,7 @@ test-suite spec
       Base.Web.Middleware
       Base.Web.Serve
       Base.Web.Swagger
+      Base.Web.Types
       Paths_base_web
   hs-source-dirs:
       test

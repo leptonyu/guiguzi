@@ -39,3 +39,11 @@ modifyNT f (NatureT nt) = NatureT $ \p v c -> let (v1,c1) = f (v,c) in nt p v1 c
 
 modifyNT' :: forall m cxt env. HasNatureT cxt m env => ((Vault,cxt) -> (Vault, cxt)) -> env -> env
 modifyNT' = over askNT . modifyNT @m
+
+
+
+
+
+
+
+

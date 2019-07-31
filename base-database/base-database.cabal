@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 78440fc5140313ff861e43af6bf801f0972c1b8176672231f561e2396c87a8a9
+-- hash: 51e021b3aaa50582cbfc92d77e4beba26eec36efd7a549ebbc2e5df3c57dfc48
 
 name:           base-database
 version:        0
@@ -28,6 +28,7 @@ library
   build-depends:
       base >=4.10 && <5
     , boots
+    , bytestring
     , data-default
     , microlens
     , monad-logger
@@ -36,5 +37,6 @@ library
     , persistent-sqlite
     , resource-pool
     , salak
+    , text
     , unliftio-core
   default-language: Haskell2010

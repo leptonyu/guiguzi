@@ -80,7 +80,7 @@ data PGConfig = PGConfig
   { host     :: ByteString
   , port     :: Word16
   , user     :: ByteString
-  , password :: ByteString
+  , password :: Maybe ByteString
   , dbname   :: ByteString
   , maxConns :: Word16
   }
@@ -103,7 +103,7 @@ pluginPostresql PGConfig{..} = do
         [ "host=" <> host
         , "port=" <> fromString (show port)
         , "user=" <> user
-        , "password=" <> password
+        , fromMaybe "" $ ("password=" <>) <$> password
         , "dbname=" <> dbname
         ]
   conn <- isoPlugin lift (`runLoggingT` lf)

@@ -1,21 +1,24 @@
 module Base.Actuator.Health where
 
+import           Base.Actuator
 import           Base.Health
-import           Base.Middleware.Actuator
 import           Base.Web.Types
 import           Boots
-import           Control.Monad.IO.Class
+import           Control.Monad.Catch
+import           Control.Monad.Reader
 import           Lens.Micro.Extras
 import           Servant
 
-
 type HealthEndpoint = "health" :> Get '[JSON] Health
 
-instance
-  ( HasWeb m cxt env
-  , HasSalak env
-  , HasLogger env
-  , MonadIO m) => Actuator m cxt env Health where
-  actuator pm pc _ ac = do
-    env     <- ask
-    mkActuator pm pc "health" ac (Proxy @HealthEndpoint) (liftIO (view (askWeb @m @cxt . askHealth) env))
+actuatorHealth
+  ::( HasSalak env
+    , HasLogger env
+    , HasHealth env
+    , HasWeb m cxt env
+    , MonadIO m
+    , MonadIO n
+    , MonadThrow n)
+  => Proxy m -> Proxy cxt -> ActuatorConfig -> Plugin env n env
+actuatorHealth pm pc ac = asks (view askHealth)
+  >>= newActuator pm pc ac "health" (Proxy @HealthEndpoint) . liftIO

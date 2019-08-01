@@ -1,5 +1,6 @@
 resolver: nightly-2019-07-30
 packages:
+- base-dto
 - base-web
 - base-client
 - base-database

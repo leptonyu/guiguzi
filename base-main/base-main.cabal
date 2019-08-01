@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: cc62042b0c2fbf75d8ad0f89a405eef603c33222435282c21c28b3f6ea87c875
+-- hash: 9f55cb49ade7024ce0087e7933186ea7b4c30acfef732cc548464e47d6ab2425
 
 name:           base-main
 version:        0
@@ -30,6 +30,7 @@ library
       base >=4.11 && <5
     , base-client
     , base-database
+    , base-dto
     , base-redis
     , base-web
     , boots
@@ -53,6 +54,7 @@ executable guiguzi-exe
       base >=4.11 && <5
     , base-client
     , base-database
+    , base-dto
     , base-main
     , base-redis
     , base-web

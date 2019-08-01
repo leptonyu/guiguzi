@@ -1,0 +1,32 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 4bd2e7036fdf37e6a0e618bb35a16f589457c1df30b176e493e53370166e02e2
+
+name:           base-dto
+version:        0
+category:       AllInOne
+homepage:       https://github.com/leptonyu/guiguzi#readme
+author:         Daniel YU
+maintainer:     Daniel YU <leptonyu@gmail.com>
+copyright:      2019 Daniel YU
+license:        MIT
+build-type:     Simple
+
+library
+  exposed-modules:
+      Base.Dto
+  other-modules:
+      Paths_base_dto
+  hs-source-dirs:
+      src
+  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification
+  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
+  build-depends:
+      base >=4.11 && <5
+    , microlens
+    , text
+  default-language: Haskell2010

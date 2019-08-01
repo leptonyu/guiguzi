@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 44e3e6d107d1b6b8207e3de60273a50ac22f7c28630839fcdd4ffe868b1fa22c
+-- hash: 176dc37b6abae8a187e2691cf4bd380153647afc7fe502b74532dfb4233b8f98
 
 name:           base-web
 version:        0
@@ -20,12 +20,14 @@ library
   exposed-modules:
       Base.Web
       Base.Health
+      Base.Actuator
   other-modules:
       Base.Web.Types
       Base.Middleware.Actuator
       Base.Middleware.Trace
       Base.Actuator.Health
       Base.Actuator.Refresh
+      Base.Actuator.Info
   hs-source-dirs:
       src
   default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification
@@ -33,6 +35,7 @@ library
   build-depends:
       aeson
     , base >=4.11 && <5
+    , base-dto
     , boots
     , data-default
     , exceptions
@@ -57,7 +60,9 @@ test-suite spec
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Base.Actuator
       Base.Actuator.Health
+      Base.Actuator.Info
       Base.Actuator.Refresh
       Base.Health
       Base.Middleware.Actuator
@@ -74,6 +79,7 @@ test-suite spec
       QuickCheck <2.14
     , aeson
     , base >=4.11 && <5
+    , base-dto
     , boots
     , data-default
     , exceptions

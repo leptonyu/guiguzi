@@ -15,6 +15,7 @@ dependencies:
   - base-database
   - base-redis
   - base-client
+  - base-dto
 
 library:
   source-dirs: src

@@ -1,5 +1,6 @@
 module Base.Web.Types where
 
+import           Base.Dto
 import           Base.Health
 import           Boots
 import           Control.Exception
@@ -30,18 +31,16 @@ import           Servant.Swagger.UI
 
 -- | Application Configuration.
 data WebConfig = WebConfig
-  { name     :: Text   -- ^ Application name.
-  , hostname :: String -- ^ Applicatoin hostname, used in swagger.
+  { hostname :: String -- ^ Applicatoin hostname, used in swagger.
   , port     :: Word16 -- ^ Application http port.
   } deriving (Eq, Show)
 
 instance Default WebConfig where
-  def = WebConfig "application" "localhost" 8888
+  def = WebConfig "localhost" 8888
 
 instance Monad m => FromProp m WebConfig where
   fromProp = WebConfig
-    <$> "name" .?: name
-    <*> "host" .?: hostname
+    <$> "host" .?: hostname
     <*> "port" .?: port
 
 data Web m cxt = Web
@@ -62,18 +61,17 @@ instance HasWeb m cxt (Web m cxt) where
 
 askContext :: Lens' (Web n cxt) cxt
 askContext = lens context (\x y -> x { context = y })
-
 instance HasLogger cxt => HasLogger (Web m cxt) where
   askLogger = askContext . askLogger
-
 instance HasSalak cxt => HasSalak (Web m cxt) where
   askSourcePack = askContext . askSourcePack
-
+instance HasApp cxt => HasApp (Web m cxt) where
+  askApp = askContext . askApp
 instance HasHealth (Web m cxt) where
   askHealth = lens health (\x y -> x { health = y })
 
-defWeb :: cxt -> Web Servant.Handler cxt
-defWeb cxt = Web cxt def emptyHealth (\_ _ _ -> id) id serveWithContext toSwagger
+defWeb :: cxt -> WebConfig -> Web Servant.Handler cxt
+defWeb cxt wc = Web cxt wc emptyHealth (\_ _ _ -> id) id serveWithContext toSwagger
 
 -- ** Swagger
 -- | Swagger Configuration
@@ -93,12 +91,14 @@ buildWeb
   :: forall m cxt n env
   . ( MonadThrow n
     , MonadIO n
+    , HasApp cxt
     , HasWeb m cxt env
     , HasLogger env
     , HasSalak env)
-  => Version -> Plugin env n (IO ())
-buildWeb ver = do
+  => Plugin env n (IO ())
+buildWeb = do
   (Web{..} :: Web m cxt) <- asks (view askWeb)
+  let AppContext{..} = view askApp context
   SwaggerConfig{..}      <- require "swagger"
   let portText = fromString (show $ port config)
   when enabled $
@@ -112,7 +112,7 @@ buildWeb ver = do
         then reifySymbol urlDir
           $ \pd -> reifySymbol urlSchema
           $ \ps -> serveW (gos pd ps) (context :. EmptyContext) (swaggerSchemaUIServer
-            $ baseInfo (hostname config) (name config) ver (fromIntegral $ port config)
+            $ baseInfo (hostname config) name ver (fromIntegral $ port config)
             $ swagge proxy)
         else serveW proxy (context :. EmptyContext) emptyServer
   where
@@ -185,7 +185,7 @@ baseInfo
   -> Swagger -- ^ Old swagger
   -> Swagger
 baseInfo hostName n v p s = s
-  & info . title   .~ n
+  & info . title   .~ (n <> " API Documents")
   & info . version .~ pack (showVersion v)
   & host ?~ Host hostName (Just $ fromIntegral p)
 

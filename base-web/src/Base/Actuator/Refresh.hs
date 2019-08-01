@@ -1,10 +1,10 @@
 module Base.Actuator.Refresh where
 
-import           Base.Middleware.Actuator
+import           Base.Actuator
 import           Base.Web.Types
 import           Boots
 import           Data.Aeson
-import           Data.Swagger.Schema      (ToSchema)
+import           Data.Swagger.Schema (ToSchema)
 import           GHC.Generics
 import           Salak
 import           Servant
@@ -16,13 +16,16 @@ data Refresh = Refresh
   , msgs     :: [String]
   } deriving (Eq, Show, Generic, ToJSON, ToSchema)
 
-instance
-  ( HasWeb m cxt env
-  , HasLogger env
-  , HasSalak env
-  , MonadIO m) => Actuator m cxt env Refresh where
-  actuator pm pc _ ac = do
-    reload  <- askReload
-    mkActuator pm pc "refresh" ac (Proxy @RefreshEndpoint) (go <$> liftIO reload)
-    where
-      go ReloadResult{..} = Refresh{..}
+actuatorRefresh
+  ::( HasSalak env
+    , HasLogger env
+    , HasWeb m cxt env
+    , MonadIO m
+    , MonadIO n
+    , MonadThrow n)
+  => Proxy m -> Proxy cxt -> ActuatorConfig -> Plugin env n env
+actuatorRefresh pm pc ac = do
+  reload <- askReload
+  newActuator pm pc ac "refresh" (Proxy @RefreshEndpoint) (liftIO $ go <$> reload)
+  where
+    go ReloadResult{..} = Refresh{..}

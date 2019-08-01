@@ -23,6 +23,7 @@ dependencies:
   - http-types
   - warp
   - exceptions
+  - base-dto
 
 
 library:
@@ -30,6 +31,7 @@ library:
   exposed-modules:
   - Base.Web
   - Base.Health
+  - Base.Actuator
   
   other-modules:
   - Base.Web.Types
@@ -39,6 +41,7 @@ library:
 
   - Base.Actuator.Health
   - Base.Actuator.Refresh
+  - Base.Actuator.Info
     
 tests:
   spec:

@@ -21,3 +21,11 @@ library:
   exposed-modules:
   - Base.Env
   - Base.Main
+
+executables:
+  guiguzi-exe:
+    source-dirs:      main
+    main:             Main.hs
+    dependencies:
+    - base-main
+    - servant-server

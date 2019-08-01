@@ -29,14 +29,12 @@ library:
   source-dirs: src
   exposed-modules:
   - Base.Web
-  - Base.Web.Types
+  - Base.Health
+  
   other-modules:
-  - Base.Web.Config
-  - Base.Web.Serve
-  - Base.Web.Swagger
-  - Base.Web.Actuator
-  - Base.Web.Middleware
-
+  - Base.Web.Types
+  
+  - Base.Middleware.Actuator
   - Base.Middleware.Trace
 
   - Base.Actuator.Health

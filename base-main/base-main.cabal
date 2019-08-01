@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a63d20d5fe8a5d81c1e3eaf0552e976997d573f0edcd36b84d0f8d82574bc9c9
+-- hash: f5fdb9752bd8191fb55a703c68d621bf1d624f9e5c241d0737ba9e4203fad306
 
 name:           base-main
 version:        0
@@ -18,20 +18,24 @@ build-type:     Simple
 
 library
   exposed-modules:
+      Base.Env
       Base.Main
   other-modules:
       Paths_base_main
   hs-source-dirs:
       src
-  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures ExistentialQuantification
+  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
       base >=4.11 && <5
+    , base-client
     , base-database
+    , base-redis
     , base-web
     , boots
     , data-default
     , microlens
+    , mtl
     , salak
     , servant-server
     , wai

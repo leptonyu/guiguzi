@@ -1,5 +1,6 @@
 module Base.Web.Types where
 
+import           Base.Health
 import           Boots
 import           Control.Exception
     ( Exception (..)
@@ -14,7 +15,9 @@ import           Data.Reflection
 import           Data.String
 import           Data.Swagger                        hiding (name, port)
 import           Data.Text                           (Text, pack)
+import           Data.Version
 import           Data.Word
+import           GHC.TypeLits
 import           Lens.Micro
 import           Lens.Micro.Extras
 import           Network.Wai
@@ -42,8 +45,10 @@ instance Monad m => FromProp m WebConfig where
     <*> "port" .?: port
 
 data Web m cxt = Web
-  { config :: WebConfig
-  , nature :: forall a. Proxy m -> Vault -> cxt -> m a -> Servant.Handler a
+  { context:: cxt
+  , config :: WebConfig
+  , health :: IO Health
+  , nature :: forall a. Proxy cxt -> Proxy m -> Vault -> m a -> Servant.Handler a
   , middle :: Middleware
   , serveW :: forall api. HasServer api '[cxt] => Proxy api -> Context '[cxt] -> Server api -> Application
   , swagge :: forall api. HasSwagger api => Proxy api -> Swagger
@@ -55,8 +60,20 @@ class HasWeb m cxt env where
 instance HasWeb m cxt (Web m cxt) where
   askWeb = id
 
-instance Default (Web Servant.Handler cxt) where
-  def = Web def (\_ _ _ -> id) id serveWithContext toSwagger
+askContext :: Lens' (Web n cxt) cxt
+askContext = lens context (\x y -> x { context = y })
+
+instance HasLogger cxt => HasLogger (Web m cxt) where
+  askLogger = askContext . askLogger
+
+instance HasSalak cxt => HasSalak (Web m cxt) where
+  askSourcePack = askContext . askSourcePack
+
+instance HasHealth (Web m cxt) where
+  askHealth = lens health (\x y -> x { health = y })
+
+defWeb :: cxt -> Web Servant.Handler cxt
+defWeb cxt = Web cxt def emptyHealth (\_ _ _ -> id) id serveWithContext toSwagger
 
 -- ** Swagger
 -- | Swagger Configuration
@@ -72,20 +89,20 @@ instance Monad m => FromProp m SwaggerConfig where
     <*> "schema"  .?= "swagger-ui.json"
     <*> "enabled" .?= True
 
-webPlugin
-  :: forall cxt m n env
+buildWeb
+  :: forall m cxt n env
   . ( MonadThrow n
     , MonadIO n
     , HasWeb m cxt env
     , HasLogger env
     , HasSalak env)
-  => cxt -> Proxy m -> Plugin env n (IO ())
-webPlugin cxt _ = do
+  => Version -> Plugin env n (IO ())
+buildWeb ver = do
   (Web{..} :: Web m cxt) <- asks (view askWeb)
   SwaggerConfig{..}      <- require "swagger"
   let portText = fromString (show $ port config)
   when enabled $
-    logInfo  $ "Swagger enabled: http://localhost:" <> portText <> "/" <> pack urlDir
+    logInfo  $ "Swagger enabled: http://"<> fromString (hostname config) <> ":" <> portText <> "/" <> pack urlDir
   logInfo $ "Service started on port(s): " <> portText
   let proxy = Proxy @EmptyAPI
   return
@@ -94,8 +111,10 @@ webPlugin cxt _ = do
     $ if enabled
         then reifySymbol urlDir
           $ \pd -> reifySymbol urlSchema
-          $ \ps -> serveW (gos pd ps) (cxt :. EmptyContext) (swaggerSchemaUIServer $ swagge proxy)
-        else serveW proxy (cxt :. EmptyContext) emptyServer
+          $ \ps -> serveW (gos pd ps) (context :. EmptyContext) (swaggerSchemaUIServer
+            $ baseInfo (hostname config) (name config) ver (fromIntegral $ port config)
+            $ swagge proxy)
+        else serveW proxy (context :. EmptyContext) emptyServer
   where
     gos :: forall a b. Proxy a -> Proxy b -> Proxy (SwaggerSchemaUI a b)
     gos _ _ = Proxy
@@ -113,19 +132,19 @@ serveWeb
   :: forall cxt n m env api
   . ( HasServer api '[cxt]
     , HasWeb m cxt env)
-  => Bool
-  -> cxt
-  -> Proxy m
+  => Proxy m
+  -> Proxy cxt
+  -> Bool
   -> Proxy api
   -> ServerT api m
   -> Plugin env n env
-serveWeb b cxt pm proxy server =
+serveWeb pm pcxt b proxy server =
   if b
     then asks
       $ over askWeb
       $ \(web :: Web m cxt) -> web { serveW =
         \p c s -> serveW web (gop p proxy) c
-          $ s :<|> (\v -> hoistServerWithContext proxy (Proxy @'[cxt]) (nature web pm v cxt) server) }
+          $ s :<|> (\v -> hoistServerWithContext proxy (Proxy @'[cxt]) (nature web pcxt pm v) server) }
     else ask
 
 gop :: forall a b. Proxy a -> Proxy b -> Proxy (a :<|> (Vault :> b))
@@ -137,14 +156,14 @@ serveWebWithSwagger
   . ( HasServer api '[cxt]
     , HasSwagger api
     , HasWeb m cxt env)
-  => Bool
-  -> cxt
-  -> Proxy m
+  => Proxy m
+  -> Proxy cxt
+  -> Bool
   -> Proxy api
   -> ServerT api m
   -> Plugin env n env
-serveWebWithSwagger b cxt pm proxy server = combine
-  [ serveWeb b cxt pm proxy server
+serveWebWithSwagger pm pcxt b proxy server = combine
+  [ serveWeb pm pcxt b proxy server
   , if b then go else ask
   ]
   where
@@ -153,6 +172,44 @@ serveWebWithSwagger b cxt pm proxy server = combine
       $ \(web :: Web m cxt) -> web { swagge = \p -> swagge web (gop p proxy) }
 
 
+middlewarePlugin :: forall m cxt env n. HasWeb m cxt env => Middleware -> Plugin env n env
+middlewarePlugin md = asks $ over askWeb $ \(web :: Web m cxt) -> web { middle = md . middle web }
 
 
+-- | Swagger modification
+baseInfo
+  :: String  -- ^ Hostname
+  -> Text    -- ^ Server Name
+  -> Version -- ^ Server version
+  -> Int     -- ^ Port
+  -> Swagger -- ^ Old swagger
+  -> Swagger
+baseInfo hostName n v p s = s
+  & info . title   .~ n
+  & info . version .~ pack (showVersion v)
+  & host ?~ Host hostName (Just $ fromIntegral p)
+
+data SwaggerTag (name :: Symbol) (desp :: Symbol)
+
+instance HasServer api ctx
+  => HasServer (SwaggerTag name desp :> api) ctx where
+  type ServerT (SwaggerTag name desp :> api) m = ServerT api m
+  route _ = route (Proxy @api)
+  hoistServerWithContext _ = hoistServerWithContext (Proxy @api)
+
+-- instance HasClient m api
+--   => HasClient m (SwaggerTag name desp :> api) where
+--   type  Client m (SwaggerTag name desp :> api) = Client m api
+--   clientWithRoute _ _ = clientWithRoute (Proxy @m) (Proxy @api)
+--   hoistClientMonad pm _ = hoistClientMonad pm (Proxy @api)
+
+instance (HasSwagger api, KnownSymbol name, KnownSymbol desp)
+  => HasSwagger (SwaggerTag name desp :> api) where
+  toSwagger _ = toSwagger (Proxy @api) & applyTags [tag]
+    where
+      tag = Tag (go (Proxy @name)) (g2 $ go (Proxy @desp)) Nothing
+      go :: forall a. KnownSymbol a => Proxy a -> Text
+      go  = pack . symbolVal
+      g2 "" = Nothing
+      g2 a  = Just a
 

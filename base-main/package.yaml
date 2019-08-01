@@ -10,10 +10,14 @@ dependencies:
   - data-default
   - servant-server
   - microlens
+  - mtl
   - base-web
   - base-database
+  - base-redis
+  - base-client
 
 library:
   source-dirs: src
   exposed-modules:
+  - Base.Env
   - Base.Main

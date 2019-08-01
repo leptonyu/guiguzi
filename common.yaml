@@ -25,5 +25,6 @@
     - KindSignatures
     - TypeFamilies
     - PartialTypeSignatures
+    - TupleSections
     - ExistentialQuantification
 

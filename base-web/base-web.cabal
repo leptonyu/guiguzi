@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: dc02194b355d9f043839ddcd7584def28da8884b2aafba6a77d47490461fc0d9
+-- hash: 44e3e6d107d1b6b8207e3de60273a50ac22f7c28630839fcdd4ffe868b1fa22c
 
 name:           base-web
 version:        0
@@ -19,19 +19,16 @@ build-type:     Simple
 library
   exposed-modules:
       Base.Web
-      Base.Web.Types
+      Base.Health
   other-modules:
-      Base.Web.Config
-      Base.Web.Serve
-      Base.Web.Swagger
-      Base.Web.Actuator
-      Base.Web.Middleware
+      Base.Web.Types
+      Base.Middleware.Actuator
       Base.Middleware.Trace
       Base.Actuator.Health
       Base.Actuator.Refresh
   hs-source-dirs:
       src
-  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures ExistentialQuantification
+  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
       aeson
@@ -62,19 +59,16 @@ test-suite spec
   other-modules:
       Base.Actuator.Health
       Base.Actuator.Refresh
+      Base.Health
+      Base.Middleware.Actuator
       Base.Middleware.Trace
       Base.Web
-      Base.Web.Actuator
-      Base.Web.Config
-      Base.Web.Middleware
-      Base.Web.Serve
-      Base.Web.Swagger
       Base.Web.Types
       Paths_base_web
   hs-source-dirs:
       test
       src
-  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures ExistentialQuantification
+  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
       QuickCheck <2.14

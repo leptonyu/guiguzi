@@ -8,7 +8,8 @@ packages:
 - opentracing
 extra-deps:
 - salak-0.3.2
-- boots-0.0.3
+- git: https://github.com/leptonyu/boots.git
+  commit: f14f93e2354eee3bf1c27fe54e7fe728f3c4ec6a
 nix:
   packages:
   - zlib

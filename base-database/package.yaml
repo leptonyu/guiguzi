@@ -16,6 +16,8 @@ dependencies:
   - unliftio-core
   - bytestring
   - text
+  - base-web
+  - mtl
 
 
 library:

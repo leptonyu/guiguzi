@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2d9054da76c44458a8e9da7763cdb67a7217d26dd5183161a91abab87f46c74b
+-- hash: 57f587a8401a9f6a7916555bc25579ab0c126e1cd1883bf1ff3ee3c67a8368da
 
 name:           base-database
 version:        0
@@ -23,15 +23,17 @@ library
       Paths_base_database
   hs-source-dirs:
       src
-  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures ExistentialQuantification
+  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
       base >=4.11 && <5
+    , base-web
     , boots
     , bytestring
     , data-default
     , microlens
     , monad-logger
+    , mtl
     , persistent
     , persistent-postgresql
     , persistent-sqlite

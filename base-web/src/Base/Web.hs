@@ -1,11 +1,10 @@
 module Base.Web(
-    module Base.Web.Config
-  , module Base.Web.Serve
-  , module Base.Web.Swagger
-  , module Base.Web.Middleware
-  , module Base.Web.Actuator
+    module Base.Web.Types
 
+  , module Base.Middleware.Actuator
   , module Base.Middleware.Trace
+
+  , module Base.Health
   , module Base.Actuator.Health
   , module Base.Actuator.Refresh
 
@@ -13,80 +12,50 @@ module Base.Web(
   , HasSwagger
   ) where
 
-import           Base.Web.Actuator
-import           Base.Web.Config
-import           Base.Web.Middleware
-import           Base.Web.Serve
-import           Base.Web.Swagger
+import           Base.Web.Types
+
+import           Base.Middleware.Actuator
+import           Base.Middleware.Trace
 
 import           Base.Actuator.Health
 import           Base.Actuator.Refresh
-import           Base.Middleware.Trace
+import           Base.Health
 
 import           Boots
-import           Control.Exception
-    ( Exception (..)
-    , SomeException
-    )
 import           Control.Monad.Catch
-import           Control.Monad.IO.Class
-import           Data.Function                       ((&))
-import           Data.Maybe
-import           Data.String
-import           Data.Version                        (Version)
-import           Lens.Micro.Extras
-import           Network.Wai
-import           Network.Wai.Handler.Warp
+import           Control.Monad.Reader
+import           Data.Version             (Version)
+import           Lens.Micro
 import           Servant
-import           Servant.Server.Internal.ServerError (responseServerError)
 import           Servant.Swagger
 
-
-
-whenException :: SomeException -> Network.Wai.Response
-whenException e = responseServerError $ fromMaybe err400 { errBody = fromString $ show e} (fromException e :: Maybe ServerError)
-
-serveWarp :: WebConfig -> Application -> IO ()
-serveWarp WebConfig{..} = runSettings
-  $ defaultSettings
-  & setPort (fromIntegral port)
-  & setOnException (\_ _ -> return ())
-  & setOnExceptionResponse whenException
+toWeb :: Web Servant.Handler cxt -> Web (App cxt) cxt
+toWeb Web{..} = Web{ nature = \pc _ v ma -> nature pc (Proxy @Servant.Handler) v $ liftIO $ runAppT context ma ,..}
 
 pluginWeb
-  :: forall env m n api
+  :: forall cxt n api
   . ( MonadIO n
     , MonadThrow n
-    , HasWebConfig env
-    , HasLogger env
-    , HasSalak env
-    , HasServeWeb '[env] env
-    , HasHealth env
-    , HasSwaggerProxy env
-    , HasMiddleware env
-    , HasNatureT env m env
+    , HasLogger cxt
+    , HasSalak cxt
     , HasSwagger api
-    , HasServer api '[env])
+    , HasServer api '[cxt])
   => Version
-  -> Proxy m
   -> Proxy api
-  -> ServerT api m
-  -> Plugin env n (IO ())
-pluginWeb v pn proxy server = do
-  config <- view askWebConfig <$> ask
-  logInfo $ "Start Service [" <> name config <> "] ..."
-  let proxycxt     = Proxy @'[env]
+  -> ServerT api (App cxt)
+  -> Plugin (Web (App cxt) cxt) n (Web (App cxt) cxt)
+  -> Plugin cxt n (IO ())
+pluginWeb v proxy server mid = do
+  env <- ask
+  let proxycxt     = Proxy @cxt
+      proxym       = Proxy @(App cxt)
+      web0@Web{..} = toWeb (defWeb env)
   ac  <- require "actuator"
-  env <- combine
-    [ pluginTrace @env pn
-    , actuator proxycxt (Proxy @(Health :<|> Refresh)) ac
-    , swaggerPlugin v proxycxt proxy
+  logInfo $ "Start Service [" <> name config <> "] ..."
+  web <- promote web0 $ combine
+    [ mid
+    , pluginTrace proxym proxycxt (local . over askLogger)
+    , actuator proxym proxycxt (Proxy @(Health :<|> Refresh)) ac
+    , serveWebWithSwagger proxym proxycxt True proxy server
     ]
-  logInfo $ "Service started on port(s): " <> fromString (show $ port config)
-  let ServeWeb f = view askServeWeb env
-      NatureT nt = view askNT env
-  return
-    $ serveWarp config
-    $ view askMiddleware env
-    $ f (Proxy @(Vault :> api)) (env :. EmptyContext)
-    $ \val -> hoistServerWithContext proxy proxycxt (nt pn val env) server
+  promote web $ buildWeb @(App cxt) @cxt v

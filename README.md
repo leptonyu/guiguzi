@@ -13,6 +13,8 @@
   - Actuators
     - Health Check, allow extensions.
     - Refresh Configuration, by [salak](https://hackage.haskell.org/package/salak).
+    - Info, show application name and version.
+    - Metrics, by [ekg-core](https://hackage.haskell.org/package/ekg-core).
     - TODO
 - Database with health check
   - [PostgreSQL](https://hackage.haskell.org/package/persistent-postgresql)

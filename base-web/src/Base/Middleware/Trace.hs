@@ -24,13 +24,13 @@ pluginTrace
     , HasLogger env
     , MonadIO n)
   => Proxy m -> Proxy cxt -> (forall a. (LogFunc -> LogFunc) -> m a -> m a) -> Plugin env n env
-pluginTrace _ _ fx = do
+pluginTrace pm pc fx = do
   logInfo "Load plugin trace."
   key <- liftIO L.newKey
   spc <- liftIO newSpanContext
   combine
-    [ asks $ over (askWeb @m @cxt) $ \Web{..} -> Web{nature = \pc pm v ma -> nature pc pm v (fx (g $ L.lookup key v) ma), ..}
-    , middlewarePlugin @m @cxt
+    [ asks $ over (askWeb @m @cxt) $ \Web{..} -> Web{nature = \pc1 pm1 v ma -> nature pc1 pm1 v (fx (g $ L.lookup key v) ma), ..}
+    , middlewarePlugin pm pc
         $ \app req resH -> do
           nspc <- case Prelude.lookup hTraceId (requestHeaders req) of
             Just htid -> case Prelude.lookup hSpanId (requestHeaders req) of

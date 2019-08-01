@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 176dc37b6abae8a187e2691cf4bd380153647afc7fe502b74532dfb4233b8f98
+-- hash: 1982926fc41743de461145a600440fd5326079fe31f56eedb33ef6b10d1c34ed
 
 name:           base-web
 version:        0
@@ -25,6 +25,7 @@ library
       Base.Web.Types
       Base.Middleware.Actuator
       Base.Middleware.Trace
+      Base.Actuator.Metrics
       Base.Actuator.Health
       Base.Actuator.Refresh
       Base.Actuator.Info
@@ -38,6 +39,7 @@ library
     , base-dto
     , boots
     , data-default
+    , ekg-core
     , exceptions
     , http-types
     , microlens
@@ -63,6 +65,7 @@ test-suite spec
       Base.Actuator
       Base.Actuator.Health
       Base.Actuator.Info
+      Base.Actuator.Metrics
       Base.Actuator.Refresh
       Base.Health
       Base.Middleware.Actuator
@@ -82,6 +85,7 @@ test-suite spec
     , base-dto
     , boots
     , data-default
+    , ekg-core
     , exceptions
     , hspec ==2.*
     , http-types

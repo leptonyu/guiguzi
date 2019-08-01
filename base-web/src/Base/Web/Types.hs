@@ -172,8 +172,8 @@ serveWebWithSwagger pm pcxt b proxy server = combine
       $ \(web :: Web m cxt) -> web { swagge = \p -> swagge web (gop p proxy) }
 
 
-middlewarePlugin :: forall m cxt env n. HasWeb m cxt env => Middleware -> Plugin env n env
-middlewarePlugin md = asks $ over askWeb $ \(web :: Web m cxt) -> web { middle = md . middle web }
+middlewarePlugin :: forall m cxt env n. HasWeb m cxt env => Proxy m -> Proxy cxt -> Middleware -> Plugin env n env
+middlewarePlugin _ _ md = asks $ over askWeb $ \(web :: Web m cxt) -> web { middle = md . middle web }
 
 
 -- | Swagger modification

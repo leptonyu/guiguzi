@@ -2,6 +2,7 @@ module Base.Middleware.Actuator where
 
 import           Base.Actuator.Health
 import           Base.Actuator.Info
+import           Base.Actuator.Metrics
 import           Base.Actuator.Refresh
 import           Base.Dto
 import           Base.Health
@@ -27,6 +28,7 @@ actuators pm pc = do
     [ actuatorHealth  pm pc ac
     , actuatorInfo    pm pc ac
     , actuatorRefresh pm pc ac
+    , actuatorMetrics pm pc ac
     ]
 
 

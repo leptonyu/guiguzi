@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 174bde0af4cf90fce16cb5638d19c923b7ca870a5370374f8fd2da0932be6a5e
+-- hash: 9206514ef57e6b3731e46f22c697bd089bca63d236cf50bcc986bb7f877ec41a
 
 name:           consul
 version:        0
@@ -29,7 +29,6 @@ library
       aeson
     , base >=4.11 && <5
     , base-client
-    , base-dto
     , boots
     , http-client
     , microlens

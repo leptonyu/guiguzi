@@ -1,14 +1,11 @@
 module Network.Consul where
 
 import           Base.Client
-import           Base.Dto
 import           Boots
-import           Control.Exception    (Exception, throw)
+import           Control.Exception    (Exception)
 import           Control.Monad.Reader
 import           Data.Aeson
 import qualified Data.HashMap.Strict  as HM
-import           Data.Kind            (Type)
-import           Data.Maybe
 import           Data.Proxy
 import           Data.Swagger.Schema  (ToSchema)
 import           Data.Text            (Text, toLower)

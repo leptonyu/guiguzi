@@ -25,3 +25,9 @@ random64 :: IsString s => GenIO -> IO s
 random64 z = do
   i <- uniform z :: IO Word64
   return $ fromString $ let x = showHex i "" in replicate (16 - length x) '0' ++ x
+
+newApp :: Text -> Version -> IO AppContext
+newApp name ver = do
+  genr <- createSystemRandom
+  inst <- random64 genr
+  return AppContext{..}

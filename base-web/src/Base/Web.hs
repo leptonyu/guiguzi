@@ -54,12 +54,11 @@ pluginWeb proxy server mid = do
       web0@Web{..} = toWeb (defWeb env str wc)
       AppContext{..} = view askApp env
   logInfo $ "Start Service [" <> name <> "] ..."
-  web <- promote web0 $ combine
+  promote web0 $ combine
     [ mid
     , pluginTrace         proxym proxycxt (local . over askLogger)
     , pluginActuators     proxym proxycxt
     , serveWebWithSwagger proxym proxycxt True proxy server
     , pluginError         proxym proxycxt
     , pluginConsulClient  proxym proxycxt
-    ]
-  promote web $ buildWeb @(App cxt) @cxt
+    ] `union` buildWeb @(App cxt) @cxt

@@ -6,6 +6,7 @@ dependencies:
   - base >= 4.11 && < 5
   - text
   - microlens
+  - mwc-random
 
 
 library:

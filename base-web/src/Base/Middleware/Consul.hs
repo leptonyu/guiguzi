@@ -50,6 +50,6 @@ pluginConsulClient _ _ = do
       delay $ logInfo "Service deregistered from consul."
       _ <- bracketP open close
       logInfo "Service registered to consul."
-      ask
+      return env
     else ask
 

@@ -1,8 +1,6 @@
 module Main where
 
-import           Base.Env
 import           Base.Main
-import           Base.Web
 import           Boots
 import           Paths_base_main
 import           Servant

@@ -10,16 +10,16 @@ module Base.Web(
   , HasSwagger
   ) where
 
-import           Base.Web.Types
-
-import           Base.Middleware.Actuator
-import           Base.Middleware.Trace
-
+import           Base.Client
+import           Base.Dto
 import           Base.Health
 import           Base.Metrics
-
-import           Base.Dto
+import           Base.Middleware.Actuator
+import           Base.Middleware.Consul
 import           Base.Middleware.Error
+import           Base.Middleware.Trace
+import           Base.Web.Types
+
 import           Boots
 import           Control.Monad.Catch
 import           Control.Monad.Reader
@@ -34,10 +34,11 @@ toWeb Web{..} = Web{ nature = \pc _ v ma -> nature pc (Proxy @Servant.Handler) v
 pluginWeb
   :: forall cxt n api
   . ( MonadIO n
-    , MonadThrow n
+    , MonadCatch n
     , HasLogger cxt
     , HasSalak cxt
     , HasApp cxt
+    , HasHttpClient cxt
     , HasSwagger api
     , HasServer api '[cxt])
   => Proxy api
@@ -59,5 +60,6 @@ pluginWeb proxy server mid = do
     , pluginActuators     proxym proxycxt
     , serveWebWithSwagger proxym proxycxt True proxy server
     , pluginError         proxym proxycxt
+    , pluginConsulClient  proxym proxycxt
     ]
   promote web $ buildWeb @(App cxt) @cxt

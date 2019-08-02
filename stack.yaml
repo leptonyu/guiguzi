@@ -10,7 +10,7 @@ packages:
 - consul
 extra-deps:
 - git: https://github.com/leptonyu/boots.git
-  commit: db0bba482a13fd845e8f9593c4399589db924c13
+  commit: 4a373f28f82a0c6ce7281d029e52028c51ba2ea2
 - salak-0.3.3
 - salak-yaml-0.3.3
 nix:

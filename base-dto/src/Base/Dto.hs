@@ -6,6 +6,7 @@ import           Lens.Micro
 data AppContext = AppContext
   { name :: !Text
   , ver  :: !Version
+  , inst :: !Text
   } deriving Show
 
 

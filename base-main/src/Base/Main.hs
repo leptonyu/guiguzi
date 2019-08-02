@@ -13,7 +13,6 @@ import           Data.Proxy
 import           Data.String
 import           Data.Version
 import           Lens.Micro
-import           Network.Consul
 import           Servant
 
 start
@@ -28,12 +27,12 @@ start ver appname proxy server = boot $ do
   sourcePack <- pluginSalak appname
   promote sourcePack $ do
     name     <- fromMaybe (fromString appname) <$> require "application.name"
-    logFunc  <- pluginLogger name
+    let inst = "1234567890ab"
+    logFunc  <- pluginLogger (name <> "," <> inst)
     promote Simple{..} $ do
       client               <- pluginClient
       (database, dbHealth) <- pluginDatabase
       (redis,    rdHealth) <- pluginRedis
-      consul               <- pluginConsul
       let app = AppContext{..}
       promote MainEnv{..}
         $ pluginWeb proxy server

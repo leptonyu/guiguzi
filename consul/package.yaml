@@ -16,6 +16,8 @@ dependencies:
   - microlens
   - aeson
   - boots
+  - base-dto
+  - mtl
 
 library:
   source-dirs: src

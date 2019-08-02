@@ -94,7 +94,7 @@ instance Monad m => FromProp m SwaggerConfig where
 
 buildWeb
   :: forall m cxt n env
-  . ( MonadThrow n
+  . ( MonadCatch n
     , MonadIO n
     , HasApp cxt
     , HasWeb m cxt env
@@ -109,6 +109,7 @@ buildWeb = do
   when enabled $
     logInfo  $ "Swagger enabled: http://"<> fromString (hostname config) <> ":" <> portText <> "/" <> pack urlDir
   logInfo $ "Service started on port(s): " <> portText
+  delay $ logInfo "Service ended"
   let proxy = Proxy @EmptyAPI
   return
     $ serveWarp config

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 98767bd7f0da00e58eb387d8030f2e3948b7baeb755fa0242a6072137a40589f
+-- hash: 537fa3ee4a5d2e84c0ba7ce7949da3444f00d5916fdbdde6442999d5b3363f06
 
 name:           base-web
 version:        0
@@ -27,6 +27,7 @@ library
       Base.Middleware.Actuator
       Base.Middleware.Trace
       Base.Middleware.Error
+      Base.Middleware.Consul
       Base.Actuator.Metrics
       Base.Actuator.Health
       Base.Actuator.Refresh
@@ -39,8 +40,10 @@ library
   build-depends:
       aeson
     , base >=4.11 && <5
+    , base-client
     , base-dto
     , boots
+    , consul
     , data-default
     , ekg-core
     , exceptions
@@ -75,6 +78,7 @@ test-suite spec
       Base.Health
       Base.Metrics
       Base.Middleware.Actuator
+      Base.Middleware.Consul
       Base.Middleware.Error
       Base.Middleware.Trace
       Base.Web
@@ -89,8 +93,10 @@ test-suite spec
       QuickCheck <2.14
     , aeson
     , base >=4.11 && <5
+    , base-client
     , base-dto
     , boots
+    , consul
     , data-default
     , ekg-core
     , exceptions

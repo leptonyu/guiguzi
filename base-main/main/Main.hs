@@ -4,14 +4,12 @@ import           Base.Env
 import           Base.Main
 import           Base.Web
 import           Boots
-import           Network.Consul
 import           Paths_base_main
 import           Servant
 
-type DemoAPI = "hello" :> Get '[PlainText] String :<|> (SwaggerTag "consul" "Consul Endpoint" :> ConsulEndpoint)
+type DemoAPI = "hello" :> Get '[PlainText] String
 
-demoServer = demo :<|> consulServer (Proxy @IO) (Proxy @MainEnv)
-
+demoServer = demo
 
 demo =  do
   logDebug "debug"

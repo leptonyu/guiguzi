@@ -24,6 +24,8 @@ dependencies:
   - warp
   - exceptions
   - base-dto
+  - base-client
+  - consul
   - ekg-core
   - monad-logger
 
@@ -42,6 +44,7 @@ library:
   - Base.Middleware.Actuator
   - Base.Middleware.Trace
   - Base.Middleware.Error 
+  - Base.Middleware.Consul
   
   - Base.Actuator.Metrics
   - Base.Actuator.Health

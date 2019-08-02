@@ -7,7 +7,6 @@ import           Base.Redis
 import           Boots.Plugin.Logger
 import           Boots.Plugin.Salak
 import           Lens.Micro
-import           Network.Consul
 import           Salak
 
 data MainEnv = MainEnv
@@ -19,7 +18,6 @@ data MainEnv = MainEnv
 
   -- Client
   , client     :: !HttpClient
-  , consul     :: ConsulConfig
 
   -- Db
   , database   :: DB
@@ -40,7 +38,5 @@ instance HasRedis MainEnv where
   askRedis = lens redis (\x y -> x { redis = y})
 instance HasApp MainEnv where
   askApp = lens app (\x y -> x { app = y})
-instance HasConsul MainEnv where
-  askConsulConfig = lens consul (\x y -> x { consul = y})
 instance HasHttpClient MainEnv where
   askHttpClient = lens client (\x y -> x { client = y})

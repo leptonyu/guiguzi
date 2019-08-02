@@ -25,10 +25,9 @@ pluginTrace
     , MonadIO n)
   => Proxy m -> Proxy cxt -> (forall a. (LogFunc -> LogFunc) -> m a -> m a) -> Plugin env n env
 pluginTrace pm pc fx = do
-  logInfo "Load plugin trace."
   key <- liftIO L.newKey
   spc <- liftIO newSpanContext
-  combine
+  env <- combine
     [ asks $ over (askWeb @m @cxt) $ \Web{..} -> Web{nature = \pc1 pm1 v ma -> nature pc1 pm1 v (fx (g $ L.lookup key v) ma), ..}
     , middlewarePlugin pm pc
         $ \app req resH -> do
@@ -44,6 +43,8 @@ pluginTrace pm pc fx = do
             $ \Trace{..} -> app req {vault = f (traceId context) spans key $ vault req }
             $ resH . mapResponseHeaders (\hs -> (hTraceId, traceId context):(hSpanId, r spans):hs)
     ]
+  logInfo "Load plugin trace."
+  return env
   where
     g (Just a) = addTrace a
     g _        = id

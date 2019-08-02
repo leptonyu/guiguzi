@@ -6,18 +6,21 @@ sudo: enabled
 
 cache:
   directories:
-   - $HOME/.cabal/store
+    - "$HOME/.stack"
+    - "$TRAVIS_BUILD_DIR/.stack-work"
 
-cabal: 2.4
-ghc:
-  - "8.6.5"
-  - "8.4.4"
+cabal: head
+matrix:
+  include:
+  - ghc: "8.6.5"
+    env: STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml"
+  - ghc: "8.4.4"
+    env: STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml"
 
 install:
- - cabal --version
- - ghc --version
+  - curl -sSL https://get.haskellstack.org/ | sh
+  - stack --version
+  - stack build --system-ghc --test --no-run-tests
 
 script:
- - cabal v2-update
- - cabal v2-build all
- - cabal v2-test --enable-test all
+ - stack test

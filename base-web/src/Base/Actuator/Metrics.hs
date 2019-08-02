@@ -4,6 +4,7 @@ import           Base.Actuator
 import           Base.Dto
 import           Base.Web.Types
 import           Boots
+import           Control.Exception      (SomeException, catch, throw)
 import           Control.Monad.Reader
 import qualified Data.HashMap.Strict    as HM
 import           Data.Proxy
@@ -33,8 +34,12 @@ actuatorMetrics pm pc ac = do
   liftIO $ registerGcMetrics store
   let newC n = liftIO $ createCounter (name <> "." <> n) store
   requests <- newC "requests"
+  req_fail <- newC "requests.failure"
   combine
-    [ middlewarePlugin pm pc $ \app req resH -> app req $ \res -> Counter.inc requests >> resH res
+    [ middlewarePlugin pm pc
+      $ \app req resH -> app req
+      $ \res -> Counter.inc requests
+        >> resH res `catch` (\(e :: SomeException) -> Counter.inc req_fail >> throw e)
     , newActuator pm pc ac "metrics" (Proxy @MetricsEndpoint) (liftIO $ go store)
     ]
   where

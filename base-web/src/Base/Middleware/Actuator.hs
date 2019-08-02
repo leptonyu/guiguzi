@@ -12,9 +12,10 @@ import           Base.Web.Types
 import           Boots
 import           Control.Monad.Catch
 import           Control.Monad.Reader
+import           Data.Kind             (Type)
 import           Data.Proxy
 
-actuators
+pluginActuators
   ::( HasSalak env
     , HasLogger env
     , HasApp env
@@ -24,8 +25,8 @@ actuators
     , MonadIO m
     , MonadIO n
     , MonadThrow n)
-  => Proxy (m :: * -> *) -> Proxy cxt -> Plugin env n env
-actuators pm pc = do
+  => Proxy (m :: Type -> Type) -> Proxy cxt -> Plugin env n env
+pluginActuators pm pc = do
   ac <- require "actuator"
   combine
     [ actuatorHealth  pm pc ac

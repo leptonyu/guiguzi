@@ -41,6 +41,7 @@ library:
   
   - Base.Middleware.Actuator
   - Base.Middleware.Trace
+  - Base.Middleware.Error 
   
   - Base.Actuator.Metrics
   - Base.Actuator.Health

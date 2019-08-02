@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1fa228d9af8d39f300ab997ba9aa0742be20a3715b3d096f49f13c6ff76b309e
+-- hash: 98767bd7f0da00e58eb387d8030f2e3948b7baeb755fa0242a6072137a40589f
 
 name:           base-web
 version:        0
@@ -26,6 +26,7 @@ library
       Base.Web.Types
       Base.Middleware.Actuator
       Base.Middleware.Trace
+      Base.Middleware.Error
       Base.Actuator.Metrics
       Base.Actuator.Health
       Base.Actuator.Refresh
@@ -74,6 +75,7 @@ test-suite spec
       Base.Health
       Base.Metrics
       Base.Middleware.Actuator
+      Base.Middleware.Error
       Base.Middleware.Trace
       Base.Web
       Base.Web.Types

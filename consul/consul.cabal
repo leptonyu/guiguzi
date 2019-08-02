@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: f60708b552d8802ae5ca64cad4403aee995542650e1fd0452883f16305f3b8ff
+-- hash: c875bc80e9d0448cf05204f8da492ef641c829109e31426cabae80c04f79ca14
 
 name:           consul
 version:        0
@@ -26,9 +26,17 @@ library
   default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
-      base >=4.11 && <5
+      aeson
+    , base >=4.11 && <5
+    , base-client
+    , boots
     , http-client
+    , microlens
+    , salak
     , servant
     , servant-client
+    , servant-swagger
+    , swagger2
+    , text
     , unordered-containers
   default-language: Haskell2010

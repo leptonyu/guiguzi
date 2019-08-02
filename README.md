@@ -22,4 +22,5 @@
   - [SQLite](https://hackage.haskell.org/package/persistent-sqlite)
 - [Redis](https://hackage.haskell.org/package/hedis) with health check
 - [Http Client](https://hackage.haskell.org/package/http-client)
+- [consul](https://www.consul.io), service networking.
 - TODO

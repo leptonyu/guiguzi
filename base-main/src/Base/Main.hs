@@ -13,6 +13,7 @@ import           Data.Proxy
 import           Data.String
 import           Data.Version
 import           Lens.Micro
+import           Network.Consul
 import           Servant
 
 start
@@ -32,6 +33,7 @@ start ver appname proxy server = boot $ do
       client               <- pluginClient
       (database, dbHealth) <- pluginDatabase
       (redis,    rdHealth) <- pluginRedis
+      consul               <- pluginConsul
       let app = AppContext{..}
       promote MainEnv{..}
         $ pluginWeb proxy server

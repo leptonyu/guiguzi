@@ -6,8 +6,16 @@ dependencies:
   - base >= 4.11 && < 5
   - servant-client
   - servant
+  - servant-swagger
+  - swagger2
   - http-client
   - unordered-containers
+  - text
+  - salak
+  - base-client
+  - microlens
+  - aeson
+  - boots
 
 library:
   source-dirs: src

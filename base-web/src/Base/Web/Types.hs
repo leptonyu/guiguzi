@@ -11,6 +11,7 @@ import           Control.Exception
 import           Control.Monad.Catch
 import           Control.Monad.Reader
 import           Data.Default
+import           Data.Kind                           (Type)
 import           Data.Maybe
 import           Data.Proxy
 import           Data.Reflection
@@ -125,11 +126,9 @@ buildWeb = do
     whenException :: SomeException -> Network.Wai.Response
     whenException e = responseServerError
       $ fromMaybe err400 { errBody = fromString $ show e} (fromException e :: Maybe ServerError)
-    serveWarp :: WebConfig -> Application -> IO ()
     serveWarp WebConfig{..} = runSettings
       $ defaultSettings
       & setPort (fromIntegral port)
-      & setOnException (\_ _ -> return ())
       & setOnExceptionResponse whenException
 
 serveWeb
@@ -160,20 +159,29 @@ serveWebWithSwagger
   . ( HasServer api '[cxt]
     , HasSwagger api
     , HasWeb m cxt env)
-  => Proxy m
+  => Proxy (m :: Type -> Type)
   -> Proxy cxt
   -> Bool
   -> Proxy api
   -> ServerT api m
   -> Plugin env n env
 serveWebWithSwagger pm pcxt b proxy server = combine
-  [ serveWeb pm pcxt b proxy server
-  , if b then go else ask
+  [ serveWeb     pm pcxt b proxy server
+  , serveSwagger pm pcxt b proxy
   ]
-  where
-    go = asks
+
+serveSwagger
+  :: forall m cxt api env n
+  . ( HasWeb m cxt env
+    , HasSwagger api)
+  => Proxy (m :: * -> *) -> Proxy cxt -> Bool -> Proxy api -> Plugin env n env
+serveSwagger _ _ b proxy =
+  if b
+    then asks
       $ over askWeb
       $ \(web :: Web m cxt) -> web { swagge = \p -> swagge web (gop p proxy) }
+    else ask
+
 
 
 middlewarePlugin :: forall m cxt env n. HasWeb m cxt env => Proxy m -> Proxy cxt -> Middleware -> Plugin env n env

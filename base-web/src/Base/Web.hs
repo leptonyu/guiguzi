@@ -19,6 +19,7 @@ import           Base.Health
 import           Base.Metrics
 
 import           Base.Dto
+import           Base.Middleware.Error
 import           Boots
 import           Control.Monad.Catch
 import           Control.Monad.Reader
@@ -46,7 +47,7 @@ pluginWeb
 pluginWeb proxy server mid = do
   env <- ask
   wc  <- require "application"
-  str <- liftIO $ newStore
+  str <- liftIO newStore
   let proxycxt     = Proxy @cxt
       proxym       = Proxy @(App cxt)
       web0@Web{..} = toWeb (defWeb env str wc)
@@ -54,8 +55,9 @@ pluginWeb proxy server mid = do
   logInfo $ "Start Service [" <> name <> "] ..."
   web <- promote web0 $ combine
     [ mid
-    , pluginTrace proxym proxycxt (local . over askLogger)
-    , actuators proxym proxycxt
+    , pluginTrace         proxym proxycxt (local . over askLogger)
+    , pluginActuators     proxym proxycxt
     , serveWebWithSwagger proxym proxycxt True proxy server
+    , pluginError         proxym proxycxt
     ]
   promote web $ buildWeb @(App cxt) @cxt

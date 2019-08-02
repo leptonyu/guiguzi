@@ -14,6 +14,7 @@ import           Data.String
 import           Data.Version
 import           Lens.Micro
 import           Servant
+import           System.Random.MWC
 
 start
   :: forall api
@@ -27,7 +28,8 @@ start ver appname proxy server = boot $ do
   sourcePack <- pluginSalak appname
   promote sourcePack $ do
     name     <- fromMaybe (fromString appname) <$> require "application.name"
-    let inst = "1234567890ab"
+    genr     <- liftIO createSystemRandom
+    inst     <- liftIO $ random64 genr
     logFunc  <- pluginLogger (name <> "," <> inst)
     promote Simple{..} $ do
       client               <- pluginClient

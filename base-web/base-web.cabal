@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1982926fc41743de461145a600440fd5326079fe31f56eedb33ef6b10d1c34ed
+-- hash: 1fa228d9af8d39f300ab997ba9aa0742be20a3715b3d096f49f13c6ff76b309e
 
 name:           base-web
 version:        0
@@ -21,6 +21,7 @@ library
       Base.Web
       Base.Health
       Base.Actuator
+      Base.Metrics
   other-modules:
       Base.Web.Types
       Base.Middleware.Actuator
@@ -29,6 +30,7 @@ library
       Base.Actuator.Health
       Base.Actuator.Refresh
       Base.Actuator.Info
+      Base.Actuator.Logger
   hs-source-dirs:
       src
   default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification
@@ -43,6 +45,7 @@ library
     , exceptions
     , http-types
     , microlens
+    , monad-logger
     , mtl
     , opentracing
     , reflection
@@ -65,9 +68,11 @@ test-suite spec
       Base.Actuator
       Base.Actuator.Health
       Base.Actuator.Info
+      Base.Actuator.Logger
       Base.Actuator.Metrics
       Base.Actuator.Refresh
       Base.Health
+      Base.Metrics
       Base.Middleware.Actuator
       Base.Middleware.Trace
       Base.Web
@@ -90,6 +95,7 @@ test-suite spec
     , hspec ==2.*
     , http-types
     , microlens
+    , monad-logger
     , mtl
     , opentracing
     , reflection

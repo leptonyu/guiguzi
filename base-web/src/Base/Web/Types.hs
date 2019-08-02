@@ -2,6 +2,7 @@ module Base.Web.Types where
 
 import           Base.Dto
 import           Base.Health
+import           Base.Metrics
 import           Boots
 import           Control.Exception
     ( Exception (..)
@@ -31,8 +32,8 @@ import           Servant.Swagger.UI
 
 -- | Application Configuration.
 data WebConfig = WebConfig
-  { hostname :: String -- ^ Applicatoin hostname, used in swagger.
-  , port     :: Word16 -- ^ Application http port.
+  { hostname :: !String -- ^ Applicatoin hostname, used in swagger.
+  , port     :: !Word16 -- ^ Application http port.
   } deriving (Eq, Show)
 
 instance Default WebConfig where
@@ -44,11 +45,12 @@ instance Monad m => FromProp m WebConfig where
     <*> "port" .?: port
 
 data Web m cxt = Web
-  { context:: cxt
-  , config :: WebConfig
-  , health :: IO Health
+  { context:: !cxt
+  , config :: !WebConfig
+  , health :: !(IO Health)
+  , store  :: !Store
   , nature :: forall a. Proxy cxt -> Proxy m -> Vault -> m a -> Servant.Handler a
-  , middle :: Middleware
+  , middle :: !Middleware
   , serveW :: forall api. HasServer api '[cxt] => Proxy api -> Context '[cxt] -> Server api -> Application
   , swagge :: forall api. HasSwagger api => Proxy api -> Swagger
   }
@@ -69,9 +71,11 @@ instance HasApp cxt => HasApp (Web m cxt) where
   askApp = askContext . askApp
 instance HasHealth (Web m cxt) where
   askHealth = lens health (\x y -> x { health = y })
+instance HasMetrics (Web m cxt) where
+  askMetrics = lens store (\x y -> x { store = y })
 
-defWeb :: cxt -> WebConfig -> Web Servant.Handler cxt
-defWeb cxt wc = Web cxt wc emptyHealth (\_ _ _ -> id) id serveWithContext toSwagger
+defWeb :: cxt -> Store -> WebConfig -> Web Servant.Handler cxt
+defWeb cxt s wc = Web cxt wc emptyHealth s (\_ _ _ -> id) id serveWithContext toSwagger
 
 -- ** Swagger
 -- | Swagger Configuration

@@ -14,9 +14,9 @@ instance ToSchema HealthStatus
 instance ToSchema Health
 
 data Health = Health
-  { status  :: HealthStatus
-  , errMsg  :: Maybe Text
-  , details :: HM.HashMap Text Health
+  { status  :: !HealthStatus
+  , errMsg  :: !(Maybe Text)
+  , details :: !(HM.HashMap Text Health)
   } deriving (Eq, Show, Generic)
 
 emptyHealth :: IO Health

@@ -1,7 +1,7 @@
 module Base.Actuator.Metrics where
 
 import           Base.Actuator
-import           Base.Dto
+import           Base.Metrics
 import           Base.Web.Types
 import           Boots
 import           Control.Exception      (SomeException, catch, throw)
@@ -22,19 +22,18 @@ type Metrics = HM.HashMap Text Text
 actuatorMetrics
   ::( HasSalak env
     , HasLogger env
-    , HasApp env
+    , HasMetrics env
     , HasWeb m cxt env
     , MonadIO m
     , MonadIO n
     , MonadThrow n)
   => Proxy m -> Proxy cxt -> ActuatorConfig -> Plugin env n env
 actuatorMetrics pm pc ac = do
-  AppContext{..} <- asks (view askApp)
-  store          <- liftIO newStore
+  store <- asks (view askMetrics)
   liftIO $ registerGcMetrics store
-  let newC n = liftIO $ createCounter (name <> "." <> n) store
-  requests <- newC "requests"
-  req_fail <- newC "requests.failure"
+  let newC n = liftIO $ createCounter n store
+  requests <- newC "http.server.requests"
+  req_fail <- newC "http.server.requests.failure"
   combine
     [ middlewarePlugin pm pc
       $ \app req resH -> app req

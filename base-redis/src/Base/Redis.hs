@@ -31,7 +31,7 @@ instance Monad m => FromProp m PortID where
 newtype REDIS = REDIS Connection
 
 data RedisException
-  = RedisException String
+  = RedisException !String
   | RedisNotInitializedException
   deriving Show
 

@@ -15,8 +15,8 @@ import           Lens.Micro.Extras
 import           Servant
 
 data Info = Info
-  { name :: Text
-  , ver  :: Version
+  { name :: !Text
+  , ver  :: !Version
   } deriving (Show, Generic, ToSchema)
 
 type InfoEndpoint = "info" :> Get '[JSON] Info

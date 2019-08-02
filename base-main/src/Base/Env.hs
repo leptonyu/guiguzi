@@ -10,18 +10,18 @@ import           Lens.Micro
 import           Salak
 
 data MainEnv = MainEnv
-  { app        :: AppContext
+  { app        :: !AppContext
 
   -- Simple
-  , sourcePack :: SourcePack
-  , logFunc    :: LogFunc
+  , sourcePack :: !SourcePack
+  , logFunc    :: !LogFunc
 
   -- Client
-  , client     :: HttpClient
+  , client     :: !HttpClient
 
   -- Db
-  , database   :: DB
-  , redis      :: REDIS
+  , database   :: !DB
+  , redis      :: !REDIS
   }
 
 class HasMainEnv env where

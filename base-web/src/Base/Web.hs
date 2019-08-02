@@ -16,6 +16,7 @@ import           Base.Middleware.Actuator
 import           Base.Middleware.Trace
 
 import           Base.Health
+import           Base.Metrics
 
 import           Base.Dto
 import           Boots
@@ -45,9 +46,10 @@ pluginWeb
 pluginWeb proxy server mid = do
   env <- ask
   wc  <- require "application"
+  str <- liftIO $ newStore
   let proxycxt     = Proxy @cxt
       proxym       = Proxy @(App cxt)
-      web0@Web{..} = toWeb (defWeb env wc)
+      web0@Web{..} = toWeb (defWeb env str wc)
       AppContext{..} = view askApp env
   logInfo $ "Start Service [" <> name <> "] ..."
   web <- promote web0 $ combine

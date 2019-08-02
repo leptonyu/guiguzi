@@ -5,7 +5,7 @@
 
 - [boots](https://hackage.haskell.org/package/boots) Based
 - Configuration load and reload, by [salak](https://hackage.haskell.org/package/salak)
-- Logger
+- [Logger](https://hackage.haskell.org/package/monad-logger)
 - Web
   - [Servant](https://hackage.haskell.org/package/servant-server) Based
   - [Swagger](https://hackage.haskell.org/package/servant-swagger)
@@ -15,6 +15,7 @@
     - Refresh Configuration, by [salak](https://hackage.haskell.org/package/salak).
     - Info, show application name and version.
     - Metrics, by [ekg-core](https://hackage.haskell.org/package/ekg-core).
+    - Logger level modification.
     - TODO
 - Database with health check
   - [PostgreSQL](https://hackage.haskell.org/package/persistent-postgresql)

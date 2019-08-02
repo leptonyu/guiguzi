@@ -1,0 +1,15 @@
+_common: !include "../common.yaml"
+name:                consul
+<<: *legal
+
+dependencies:
+  - base >= 4.11 && < 5
+  - servant-client
+  - servant
+  - http-client
+  - unordered-containers
+
+library:
+  source-dirs: src
+  exposed-modules:
+  - Network.Consul

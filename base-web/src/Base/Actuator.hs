@@ -10,8 +10,7 @@ import           Salak
 import           Servant
 import           Servant.Swagger
 
-newtype ActuatorConfig = ActuatorConfig
-  { enabled   :: Bool }
+newtype ActuatorConfig = ActuatorConfig { enabled :: Bool }
 
 instance Monad m => FromProp m ActuatorConfig where
   fromProp = ActuatorConfig

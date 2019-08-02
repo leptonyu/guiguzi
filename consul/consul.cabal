@@ -1,0 +1,34 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: f60708b552d8802ae5ca64cad4403aee995542650e1fd0452883f16305f3b8ff
+
+name:           consul
+version:        0
+category:       AllInOne
+homepage:       https://github.com/leptonyu/guiguzi#readme
+author:         Daniel YU
+maintainer:     Daniel YU <leptonyu@gmail.com>
+copyright:      2019 Daniel YU
+license:        MIT
+build-type:     Simple
+
+library
+  exposed-modules:
+      Network.Consul
+  other-modules:
+      Paths_consul
+  hs-source-dirs:
+      src
+  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification
+  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
+  build-depends:
+      base >=4.11 && <5
+    , http-client
+    , servant
+    , servant-client
+    , unordered-containers
+  default-language: Haskell2010

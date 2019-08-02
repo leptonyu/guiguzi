@@ -25,6 +25,7 @@ dependencies:
   - exceptions
   - base-dto
   - ekg-core
+  - monad-logger
 
 
 library:
@@ -33,17 +34,19 @@ library:
   - Base.Web
   - Base.Health
   - Base.Actuator
+  - Base.Metrics
   
   other-modules:
   - Base.Web.Types
   
   - Base.Middleware.Actuator
   - Base.Middleware.Trace
+  
   - Base.Actuator.Metrics
-
   - Base.Actuator.Health
   - Base.Actuator.Refresh
   - Base.Actuator.Info
+  - Base.Actuator.Logger
     
 tests:
   spec:

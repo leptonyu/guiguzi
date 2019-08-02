@@ -1,4 +1,4 @@
-resolver: nightly-2019-07-30
+resolver: nightly-2019-08-02
 packages:
 - base-dto
 - base-web
@@ -7,11 +7,12 @@ packages:
 - base-redis
 - base-main
 - opentracing
+- consul
 extra-deps:
-- salak-0.3.2
 - git: https://github.com/leptonyu/boots.git
-  commit: f14f93e2354eee3bf1c27fe54e7fe728f3c4ec6a
-- plugins-1.5.7
+  commit: db0bba482a13fd845e8f9593c4399589db924c13
+- salak-0.3.3
+- salak-yaml-0.3.3
 nix:
   packages:
   - zlib

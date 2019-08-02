@@ -12,8 +12,8 @@ import           Servant
 type RefreshEndpoint = "refresh" :> Post '[JSON] Refresh
 
 data Refresh = Refresh
-  { hasError :: Bool
-  , msgs     :: [String]
+  { hasError :: !Bool
+  , msgs     :: ![String]
   } deriving (Eq, Show, Generic, ToJSON, ToSchema)
 
 actuatorRefresh

@@ -55,8 +55,8 @@ pluginDatabase = do
     else return (throw DatabaseNotInitializedException, Nothing)
 
 data DBE = DBE
-  { dbelog :: Boots.LogFunc
-  , dbepoo :: Pool SqlBackend
+  { dbelog :: !Boots.LogFunc
+  , dbepoo :: !(Pool SqlBackend)
   }
 
 instance HasLogger DBE where
@@ -77,12 +77,12 @@ runTrans ma = do
   liftIO $ runAppT env (runReaderT ma a { connLogFunc = lf }) `finally` destroyResource dbConn b a
 
 data PGConfig = PGConfig
-  { host     :: ByteString
-  , port     :: Word16
-  , user     :: ByteString
-  , password :: Maybe ByteString
-  , dbname   :: ByteString
-  , maxConns :: Word16
+  { host     :: !ByteString
+  , port     :: !Word16
+  , user     :: !ByteString
+  , password :: !(Maybe ByteString)
+  , dbname   :: !ByteString
+  , maxConns :: !Word16
   }
 
 instance Monad m => FromProp m PGConfig where
@@ -113,8 +113,8 @@ pluginPostresql PGConfig{..} = do
 
 
 data SQLiteConfig = SQLiteConfig
-  { connStr  :: T.Text
-  , maxConns :: Word16
+  { connStr  :: !T.Text
+  , maxConns :: !Word16
   }
 
 instance Monad m => FromProp m SQLiteConfig where

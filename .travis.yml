@@ -6,10 +6,10 @@ cache:
   - "$HOME/.stack"
   - "$TRAVIS_BUILD_DIR/.stack-work"
 cabal: head
-matrix:
-  include:
-  - ghc: 8.6.5
-    env: STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml"
+# matrix:
+#   include:
+#   - ghc: 8.6.5
+#     env: STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml"
 install:
 - curl -sSL https://get.haskellstack.org/ | sh
 - stack --version

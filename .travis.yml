@@ -13,7 +13,6 @@ matrix:
 install:
 - curl -sSL https://get.haskellstack.org/ | sh
 - stack --version
-- [[ -d "$BIN" ]] && rm -rf "$BIN"
 script:
 - stack --local-bin-path $BIN install --system-ghc --test --no-run-tests
 - $TRAVIS_BUILD_DIR/script/deploy.sh

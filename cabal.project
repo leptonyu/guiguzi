@@ -5,5 +5,7 @@ packages:
   base-client
   base-database
   base-redis
+  base-rabbitmq
   base-main
   opentracing
+  consul

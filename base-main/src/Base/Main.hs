@@ -6,10 +6,8 @@ import           Base.Env
 import           Base.Redis
 import           Base.Web
 import           Boots
-import           Data.Maybe
 import           Data.Proxy
 import           Data.Version
-import           Lens.Micro
 import           Servant
 
 start
@@ -28,8 +26,4 @@ start ver appname proxy server = boot $ do
     (redis,    rdHealth) <- buildRedis
     within MainEnv{..}
       $ buildWeb proxy server
-      $ asks
-      $ over (askWeb @(App MainEnv) @MainEnv . askHealth)
-      $ combineHealth
-      $ catMaybes [dbHealth, rdHealth]
-
+      $ buildHealth [dbHealth, rdHealth]

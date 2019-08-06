@@ -1,0 +1,36 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: ad02af33a383285a04f79fa571a2fdecee377a41a5bd5e3389661074d094acca
+
+name:           base-rabbitmq
+version:        0
+category:       AllInOne
+homepage:       https://github.com/leptonyu/guiguzi#readme
+author:         Daniel YU
+maintainer:     Daniel YU <leptonyu@gmail.com>
+copyright:      2019 Daniel YU
+license:        MIT
+build-type:     Simple
+
+library
+  exposed-modules:
+      Base.Rabbitmq
+  other-modules:
+      Paths_base_rabbitmq
+  hs-source-dirs:
+      src
+  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification
+  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
+  build-depends:
+      amqp
+    , base >=4.11 && <5
+    , boots-app
+    , data-default
+    , microlens
+    , network
+    , salak
+  default-language: Haskell2010

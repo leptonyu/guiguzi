@@ -1,0 +1,18 @@
+_common: !include "../common.yaml"
+name:                base-rabbitmq
+<<: *legal
+
+dependencies:
+  - base >= 4.11 && < 5
+  - boots-app
+  - salak
+  - microlens
+  - data-default
+  - network
+  - amqp
+
+
+library:
+  source-dirs: src
+  exposed-modules:
+  - Base.Rabbitmq

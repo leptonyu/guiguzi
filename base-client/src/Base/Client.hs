@@ -23,12 +23,10 @@ instance Monad m => FromProp m ManagerSettings where
       , managerIdleConnectionCount = idleCount
       }
 
-newtype HttpClient = HttpClient Manager
+newtype HttpClient = HttpClient ManagerSettings
 
-pluginClient :: (HasSalak env, MonadIO m, MonadThrow m) => Plugin env m HttpClient
-pluginClient = do
-  c  <- require "client"
-  liftIO (HttpClient <$> newManager c)
+buildClient :: (HasSalak env, MonadIO m, MonadThrow m) => Factory m env HttpClient
+buildClient = HttpClient <$> require "client"
 
 class HasHttpClient env where
   askHttpClient :: Lens' env HttpClient

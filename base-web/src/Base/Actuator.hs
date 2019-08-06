@@ -25,7 +25,7 @@ newActuator
     , HasWeb m cxt env
     , MonadIO n
     , MonadThrow n)
-  => Proxy m -> Proxy cxt -> ActuatorConfig -> Text -> Proxy api -> ServerT api m -> Plugin env n env
+  => Proxy m -> Proxy cxt -> ActuatorConfig -> Text -> Proxy api -> ServerT api m -> Factory n env env
 newActuator pm pc ActuatorConfig{..} name _ s = do
   b <- require $ "actuator." <> name <> ".enabled"
   let ok = enabled && fromMaybe True b

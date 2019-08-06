@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 537fa3ee4a5d2e84c0ba7ce7949da3444f00d5916fdbdde6442999d5b3363f06
+-- hash: a92d3c9b999382fffd5dd83c963000384e772ccbd2a90e41b61eafa96402aaa2
 
 name:           base-web
 version:        0
@@ -41,8 +41,7 @@ library
       aeson
     , base >=4.11 && <5
     , base-client
-    , base-dto
-    , boots
+    , boots-app
     , consul
     , data-default
     , ekg-core
@@ -94,8 +93,7 @@ test-suite spec
     , aeson
     , base >=4.11 && <5
     , base-client
-    , base-dto
-    , boots
+    , boots-app
     , consul
     , data-default
     , ekg-core

@@ -23,7 +23,7 @@ actuatorRefresh
     , MonadIO m
     , MonadIO n
     , MonadThrow n)
-  => Proxy m -> Proxy cxt -> ActuatorConfig -> Plugin env n env
+  => Proxy m -> Proxy cxt -> ActuatorConfig -> Factory n env env
 actuatorRefresh pm pc ac = do
   reload <- askReload
   newActuator pm pc ac "refresh" (Proxy @RefreshEndpoint) (liftIO $ go <$> reload)

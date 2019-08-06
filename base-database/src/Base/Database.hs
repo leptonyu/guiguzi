@@ -2,16 +2,15 @@ module Base.Database where
 
 import           Base.Health
 import           Boots
-import           Control.Exception              (Exception, finally, throw)
+import           Control.Exception           (Exception, finally, throw)
 import           Control.Monad.IO.Unlift
-import           Control.Monad.Logger.CallStack
 import           Control.Monad.Reader
-import           Data.ByteString                (ByteString)
-import qualified Data.ByteString                as B
+import           Data.ByteString             (ByteString)
+import qualified Data.ByteString             as B
 import           Data.Maybe
 import           Data.Pool
 import           Data.String
-import qualified Data.Text                      as T
+import qualified Data.Text                   as T
 import           Data.Word
 import           Database.Persist.Postgresql
 import           Database.Persist.Sqlite
@@ -42,16 +41,16 @@ class HasDataSource env where
 instance HasDataSource DB where
   askDataSource = id
 
-pluginDatabase :: (HasSalak env, HasLogger env, MonadThrow m, MonadUnliftIO m) => Plugin env m (DB, Maybe CheckHealth)
-pluginDatabase = do
+buildDatabase :: (HasSalak env, HasLogger env, MonadThrow m, MonadUnliftIO m) => Factory m env (DB, Maybe CheckHealth)
+buildDatabase = do
   enabled <- fromMaybe True <$> require "datasource.enabled"
   if enabled
     then do
       dbtype <- fromMaybe SQLite <$> require "datasource.type"
       logInfo $ "Loading database " <> T.pack (show dbtype)
       case dbtype of
-        PostgreSQL -> require "datasource.postgresql" >>= pluginPostresql
-        _          -> require "datasource.sqlite"     >>= pluginSqlite
+        PostgreSQL -> require "datasource.postgresql" >>= buildPostresql
+        _          -> require "datasource.sqlite"     >>= buildSqlite
     else return (throw DatabaseNotInitializedException, Nothing)
 
 data DBE = DBE
@@ -95,8 +94,8 @@ instance Monad m => FromProp m PGConfig where
     <*> "max-conns" .?= 10
 
 
-pluginPostresql :: (HasLogger env, MonadThrow m, MonadUnliftIO m) => PGConfig -> Plugin env m (DB, Maybe CheckHealth)
-pluginPostresql PGConfig{..} = do
+buildPostresql :: (HasLogger env, MonadThrow m, MonadUnliftIO m) => PGConfig -> Factory m env (DB, Maybe CheckHealth)
+buildPostresql PGConfig{..} = do
   lf  <- askLoggerIO
   lfc <- asks (view askLogger)
   let go = B.intercalate " "
@@ -106,8 +105,8 @@ pluginPostresql PGConfig{..} = do
         , maybe "" ("password=" <>) password
         , "dbname=" <> dbname
         ]
-  conn <- isoPlugin lift (`runLoggingT` lf)
-    $ wrapP
+  conn <- natTrans (`runLoggingT` lf) lift
+    $ wrap
     $ withPostgresqlPool go (fromIntegral maxConns)
   return (DB conn, Just ("PostgreSQL", check lfc conn))
 
@@ -122,12 +121,12 @@ instance Monad m => FromProp m SQLiteConfig where
     <$> "conn"      .?= ":memory:"
     <*> "max-conns" .?= 1
 
-pluginSqlite :: (HasLogger env, MonadThrow m, MonadUnliftIO m) => SQLiteConfig -> Plugin env m (DB, Maybe CheckHealth)
-pluginSqlite SQLiteConfig{..} = do
+buildSqlite :: (HasLogger env, MonadThrow m, MonadUnliftIO m) => SQLiteConfig -> Factory m env (DB, Maybe CheckHealth)
+buildSqlite SQLiteConfig{..} = do
   lf   <- askLoggerIO
   lfc  <- asks (view askLogger)
-  conn <- isoPlugin lift (`runLoggingT` lf)
-    $ wrapP
+  conn <- natTrans (`runLoggingT` lf) lift
+    $ wrap
     $ withSqlitePool connStr (fromIntegral maxConns)
   return (DB conn, Just ("SQLite", check lfc conn))
 

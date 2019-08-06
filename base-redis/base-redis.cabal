@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a5c0613a3c5525ea0a15d99eea00c017d900f31fda5e0ed00bac7f445fd088a1
+-- hash: 9bde3202e171ea16a736572069a2fdb22f14a86d4646525515598fd174cfc366
 
 name:           base-redis
 version:        0
@@ -28,7 +28,7 @@ library
   build-depends:
       base >=4.11 && <5
     , base-web
-    , boots
+    , boots-app
     , data-default
     , hedis
     , microlens

@@ -33,4 +33,6 @@ app.yaml
 
 .vscode
 
+dump*
+
 # End of https://www.gitignore.io/api/haskell

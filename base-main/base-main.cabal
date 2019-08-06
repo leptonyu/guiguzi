@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.31.2.
+-- This file has been generated from package.yaml by hpack version 0.31.1.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 9f55cb49ade7024ce0087e7933186ea7b4c30acfef732cc548464e47d6ab2425
+-- hash: 014bdedbd0d360c29f5ac06bd56e4db1cd2e9833e3c1c1693cdb545ca7a04b51
 
 name:           base-main
 version:        0
@@ -30,16 +30,12 @@ library
       base >=4.11 && <5
     , base-client
     , base-database
-    , base-dto
     , base-redis
     , base-web
-    , boots
-    , data-default
+    , boots-app
     , microlens
     , mtl
-    , salak
     , servant-server
-    , wai
   default-language: Haskell2010
 
 executable guiguzi-exe
@@ -54,15 +50,11 @@ executable guiguzi-exe
       base >=4.11 && <5
     , base-client
     , base-database
-    , base-dto
     , base-main
     , base-redis
     , base-web
-    , boots
-    , data-default
+    , boots-app
     , microlens
     , mtl
-    , salak
     , servant-server
-    , wai
   default-language: Haskell2010

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: d6622c7bdd3b08ce477a852a699089b00f7921064ca5a84ed0a0fc86c39edbb5
+-- hash: 47f0be6e29ae3dc92f92db0b2863813e0f75a1ff86a780f3e191d745d7bc23f8
 
 name:           opentracing
 version:        0
@@ -30,7 +30,6 @@ library
       base >=4.10 && <5
     , bytestring
     , microlens
-    , mwc-random
     , scientific
     , text
     , time

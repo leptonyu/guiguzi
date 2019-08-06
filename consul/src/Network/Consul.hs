@@ -2,17 +2,18 @@ module Network.Consul where
 
 import           Base.Client
 import           Boots
-import           Control.Exception    (Exception)
-import           Control.Monad.Reader
 import           Data.Aeson
-import qualified Data.HashMap.Strict  as HM
+import           Data.ByteString              (ByteString)
+import qualified Data.HashMap.Strict          as HM
 import           Data.Proxy
-import           Data.Swagger.Schema  (ToSchema)
-import           Data.Text            (Text, toLower)
+import           Data.Swagger.Schema          (ToSchema)
+import           Data.Text                    (Text, toLower)
 import           Data.Word
 import           GHC.Generics
 import           Lens.Micro
 import           Lens.Micro.Extras
+import           Network.HTTP.Client          (newManager)
+import           Network.HTTP.Client.Internal hiding (Proxy)
 import           Salak
 import           Servant.API
 import           Servant.Client
@@ -47,8 +48,8 @@ instance FromJSON ServiceCheck where
   parseJSON = withObject "ServiceCheck" $ \v -> ServiceCheck
     <$> v .: "Name"
     <*> v .: "ID"
-    <*> v .:? "Interval" .!= ""
-    <*> v .:? "DeregisterCriticalServiceAfter" .!= ""
+    <*> v .: "Interval"
+    <*> v .: "DeregisterCriticalServiceAfter"
     <*> v .:? "HTTP" .!= ""
 
 data ServiceWeight = ServiceWeight
@@ -59,10 +60,10 @@ data ServiceWeight = ServiceWeight
 data ServiceDef = ServiceDef
   { sname        :: !Text
   , sid          :: !Text
-  , stags        :: ![String]
+  , stags        :: ![Text]
   , saddr        :: !(Maybe String)
   , saddrmap     :: !(HM.HashMap String String)
-  , smeta        :: !(HM.HashMap String String)
+  , smeta        :: !(HM.HashMap Text Text)
   , sport        :: !(Maybe Word16)
   , skind        :: !ServiceKind
   , sconnect     :: !(Maybe ServiceConnect)
@@ -77,14 +78,14 @@ data HttpServer = HttpServer
   , sid   :: !Text
   , saddr :: !(Maybe String)
   , sport :: !(Maybe Word16)
-  , stags :: ![String]
+  , stags :: ![Text]
+  , smeta :: !(HM.HashMap Text Text)
   , chk   :: ServiceCheck
   }
 
 newServer :: HttpServer -> ServiceDef
 newServer HttpServer{..} = ServiceDef
   { saddrmap = HM.empty
-  , smeta = HM.empty
   , skind = KindNil
   , sconnect = Nothing
   , scheck = Just chk
@@ -100,6 +101,8 @@ instance ToJSON ServiceDef where
     , "Address" .= saddr
     , "Port"    .= sport
     , "Tags"    .= toJSON stags
+    , "Meta"    .= toJSON smeta
+    , "Check"   .= toJSON scheck
     ]
 
 instance FromJSON ServiceDef where
@@ -109,7 +112,7 @@ instance FromJSON ServiceDef where
     <*> v .:? "Tags" .!= []
     <*> v .: "Address"
     <*> return HM.empty
-    <*> return HM.empty
+    <*> v .:? "Meta" .!= HM.empty
     <*> v .: "Port"
     <*> return KindNil
     <*> return Nothing
@@ -117,10 +120,6 @@ instance FromJSON ServiceDef where
     <*> return []
     <*> v .:? "EnableTagOverride" .!= True
     <*> return Nothing
-
-
--- class MonadConsul m where
---   registerService ::
 
 type ConsulEndpoint = "v1" :> "agent" :> AgentEndpoint
 
@@ -166,22 +165,42 @@ runConsul
   => Proxy m -> Proxy env -> HttpClient -> ClientM a -> AppT env m a
 runConsul _ _ (HttpClient mg) cma = do
   env <- ask
-  let ConsulConfig bu = view askConsulConfig env
-  v   <- liftIO $ runClientM cma (ClientEnv mg bu Nothing)
+  let ConsulConfig{..} = view askConsulConfig env
+      mgn              = case token of
+        Just t -> mg { managerModifyRequest = \req -> return req { requestHeaders = ("X-Consul-Token", t) : requestHeaders req }}
+        _      -> mg
+  m   <- liftIO $ newManager mgn
+  v   <- liftIO $ runClientM cma (ClientEnv m url Nothing)
   case v of
     Left  e -> throwM e
     Right a -> return a
 
 consulServer pm p hc = hoistClient api (runConsul pm p hc) (client api)
 
-data ConsulConfig = ConsulConfig BaseUrl
+data ConsulConfig = ConsulConfig
+  { meta     :: HM.HashMap Text Text
+  , tags     :: [Text]
+  , token    :: Maybe ByteString
+  , interval :: String
+  , dcsa     :: String
+  , url      :: BaseUrl
+  }
 
-instance Monad m => FromProp m ConsulConfig where
-  fromProp = fmap ConsulConfig $ BaseUrl
+instance Monad m => FromProp m BaseUrl where
+  fromProp = BaseUrl
     <$> "schema" .?= Http
     <*> "host"   .?= "127.0.0.1"
     <*> "port"   .?= 8500
     <*> "path"   .?= ""
+
+instance Monad m => FromProp m ConsulConfig where
+  fromProp = ConsulConfig
+    <$> "meta"
+    <*> "tags"
+    <*> "token"
+    <*> "interval" .?= "10s"
+    <*> "deregister-critical-service-after" .?= "30m"
+    <*> fromProp
 
 instance Monad m => FromProp m Scheme where
   fromProp = readEnum (go.toLower)
@@ -198,8 +217,5 @@ class HasConsul env where
 
 instance HasConsul ConsulConfig where
   askConsulConfig = id
-
-data ConsulException = ConsulDisabledException deriving Show
-instance Exception ConsulException
 
 

@@ -2,26 +2,17 @@ module Base.Env where
 
 import           Base.Client
 import           Base.Database
-import           Base.Dto
 import           Base.Redis
-import           Boots.Plugin.Logger
-import           Boots.Plugin.Salak
+import           Boots
 import           Lens.Micro
-import           Salak
 
 data MainEnv = MainEnv
-  { app        :: !AppContext
-
-  -- Simple
-  , sourcePack :: !SourcePack
-  , logFunc    :: !LogFunc
-
+  { app      :: !AppEnv
   -- Client
-  , client     :: !HttpClient
-
+  , client   :: !HttpClient
   -- Db
-  , database   :: DB
-  , redis      :: REDIS
+  , database :: DB
+  , redis    :: REDIS
   }
 
 class HasMainEnv env where
@@ -29,9 +20,9 @@ class HasMainEnv env where
 instance HasMainEnv MainEnv where
   askMainEnv = id
 instance HasSalak MainEnv where
-  askSourcePack = lens sourcePack (\x y -> x { sourcePack = y})
+  askSourcePack = askApp . askSourcePack
 instance HasLogger MainEnv where
-  askLogger = lens logFunc (\x y -> x { logFunc = y})
+  askLogger = askApp . askLogger
 instance HasDataSource MainEnv where
   askDataSource = lens database (\x y -> x { database = y})
 instance HasRedis MainEnv where

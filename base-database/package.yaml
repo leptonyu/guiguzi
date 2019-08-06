@@ -4,10 +4,9 @@ name:                base-database
 
 dependencies:
   - base >= 4.11 && < 5
-  - boots
+  - boots-app
   - salak
   - microlens
-  - data-default
   - persistent
   - resource-pool
   - persistent-postgresql
@@ -18,7 +17,6 @@ dependencies:
   - text
   - base-web
   - mtl
-  # - ghc
 
 
 library:

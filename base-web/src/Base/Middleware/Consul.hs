@@ -1,19 +1,18 @@
 module Base.Middleware.Consul where
 
 import           Base.Client
-import           Base.Dto
 import           Base.Web.Types
 import           Boots
 import           Control.Monad
-import           Control.Monad.Catch
-import           Control.Monad.IO.Class
+import qualified Data.HashMap.Strict as HM
 import           Data.Maybe
 import           Data.Proxy
-import           Data.Version           (showVersion)
+import           Data.String
+import           Data.Version        (showVersion)
 import           Lens.Micro.Extras
 import           Network.Consul
 
-pluginConsulClient
+buildConsul
   :: forall m cxt env n
   . ( HasApp env
     , HasLogger env
@@ -22,34 +21,33 @@ pluginConsulClient
     , HasHttpClient cxt
     , MonadIO n
     , MonadCatch n)
-  => Proxy m -> Proxy cxt -> Plugin env n env
-pluginConsulClient _ _ = do
-  b  <- fromMaybe True <$> require "consul.enabled"
-  if b
-    then do
-      env <- ask
-      let AppContext{..} = view askApp env
-          Web{..}        = view askWeb env :: Web m cxt
-          hc             = view askHttpClient context
-          WebConfig{..}  = config
-      consul        <- require "consul"
-      ConsulApi{..} <- promote (consul :: ConsulConfig) $
-        return (askConsul @ConsulConfig @IO hc)
-      let
-        open = liftIO
-          $ runAppT consul
-          $ registerService
-          $ newServer
-          $ HttpServer name inst (Just hostname) (Just port) [ "version:" <> showVersion ver ]
-          $ ServiceCheck name inst "" ""
-          $ "http://" <> hostname <> ":" <> show port <>"/actuator/health"
-        close _ = void
-          $ liftIO
-          $ runAppT consul
-          $ deregisterService inst
-      delay $ logInfo "Service deregistered from consul."
-      _ <- bracketP open close
-      logInfo "Service registered to consul."
-      return env
-    else ask
+  => Proxy m -> Proxy cxt -> Factory n env env
+buildConsul _ _ = do
+  b  <- fromMaybe True <$> require "consul.discovery.enabled"
+  tryBuild b $ do
+    env <- ask
+    let AppEnv{..}    = view askApp env
+        Web{..}       = view askWeb env :: Web m cxt
+        hc            = view askHttpClient context
+        WebConfig{..} = config
+    consul@ConsulConfig{..} <- require "consul"
+    ConsulApi{..} <- within (consul :: ConsulConfig) $
+      return (askConsul @ConsulConfig @IO hc)
+    let
+      met2 = HM.insert "version" (fromString $ showVersion version) meta
+      open = liftIO
+        $ runAppT consul
+        $ registerService
+        $ newServer
+        $ HttpServer name instanceId (Just hostname) (Just port) tags met2
+        $ ServiceCheck name instanceId interval dcsa
+        $ "http://" <> hostname <> ":" <> show port <>"/actuator/health"
+      close _ = void
+        $ liftIO
+        $ runAppT consul
+        $ deregisterService instanceId
+    delayA $ logInfo "Service deregistered from consul."
+    _ <- bracket open close
+    logInfo "Service registered to consul."
+    return env
 

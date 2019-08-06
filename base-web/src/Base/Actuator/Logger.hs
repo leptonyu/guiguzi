@@ -3,12 +3,9 @@ module Base.Actuator.Logger where
 import           Base.Actuator
 import           Base.Web.Types
 import           Boots
-import           Control.Monad.Catch
-import           Control.Monad.Logger.CallStack
-import           Control.Monad.Reader
 import           Data.Aeson
-import           Data.Swagger.Schema            (ToSchema)
-import           Data.Text                      (Text, toLower)
+import           Data.Swagger.Schema (ToSchema)
+import           Data.Text           (Text, toLower)
 import           GHC.Generics
 import           Lens.Micro.Extras
 import           Salak
@@ -42,7 +39,7 @@ actuatorLogger
     , MonadIO m
     , MonadIO n
     , MonadThrow n)
-  => Proxy m -> Proxy cxt -> ActuatorConfig -> Plugin env n env
+  => Proxy m -> Proxy cxt -> ActuatorConfig -> Factory n env env
 actuatorLogger pm pc ac = do
   wll <- asks (view askLogLevel)
   newActuator pm pc ac "logger" (Proxy @LoggerEndpoint) (getLogInfo wll :<|> putLogInfo wll)

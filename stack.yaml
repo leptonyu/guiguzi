@@ -1,6 +1,5 @@
-resolver: nightly-2019-08-02
+resolver: nightly-2019-08-04
 packages:
-- base-dto
 - base-web
 - base-client
 - base-database
@@ -9,10 +8,15 @@ packages:
 - opentracing
 - consul
 extra-deps:
+- boots-0.1
 - git: https://github.com/leptonyu/boots.git
-  commit: 26976ae4098afb0bfe625529c230b35c7a73c883
-- salak-0.3.3
-- salak-yaml-0.3.3
+  commit: e723b62f9623761d243cf8a7098b3f2a40382399
+  subdirs:
+  - boots-app
+- git: https://github.com/leptonyu/salak.git
+  commit: d6a449996650a62e9b66850add8c15083674001d
+  subdirs:
+  - salak
 nix:
   packages:
   - zlib

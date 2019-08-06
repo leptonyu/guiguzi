@@ -5,12 +5,10 @@ import           Base.Metrics
 import           Base.Web.Types
 import           Boots
 import           Control.Exception      (SomeException, catch, throw)
-import           Control.Monad.Reader
 import qualified Data.HashMap.Strict    as HM
 import           Data.Proxy
 import           Data.Text              (Text, pack)
 import           Lens.Micro.Extras
-import           Salak
 import           Servant
 import           System.Metrics
 import qualified System.Metrics.Counter as Counter
@@ -27,14 +25,14 @@ actuatorMetrics
     , MonadIO m
     , MonadIO n
     , MonadThrow n)
-  => Proxy m -> Proxy cxt -> ActuatorConfig -> Plugin env n env
+  => Proxy m -> Proxy cxt -> ActuatorConfig -> Factory n env env
 actuatorMetrics pm pc ac = do
   store <- asks (view askMetrics)
   liftIO $ registerGcMetrics store
   let newC n = liftIO $ createCounter n store
   requests <- newC "http.server.requests"
   req_fail <- newC "http.server.requests.failure"
-  combine
+  mconcat
     [ middlewarePlugin pm pc
       $ \app req resH -> app req
       $ \res -> Counter.inc requests

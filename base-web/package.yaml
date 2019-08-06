@@ -4,7 +4,7 @@ name:                base-web
 
 dependencies:
   - base >= 4.11 && < 5
-  - boots
+  - boots-app
   - wai
   - salak
   - data-default
@@ -23,7 +23,6 @@ dependencies:
   - http-types
   - warp
   - exceptions
-  - base-dto
   - base-client
   - consul
   - ekg-core

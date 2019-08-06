@@ -2,13 +2,13 @@ module Base.Middleware.Trace where
 
 import           Base.Web.Types
 import           Boots
-import           Control.Monad.Reader
 import           Data.Opentracing
 import           Data.Proxy
-import qualified Data.Text            as T
-import           Data.Text.Encoding   (decodeUtf8)
-import qualified Data.Vault.Lazy      as L
+import qualified Data.Text          as T
+import           Data.Text.Encoding (decodeUtf8)
+import qualified Data.Vault.Lazy    as L
 import           Lens.Micro
+import           Lens.Micro.Extras
 import           Network.HTTP.Types
 import           Network.Wai
 
@@ -18,16 +18,18 @@ hTraceId = "X-B3-TraceId"
 hSpanId :: HeaderName
 hSpanId = "X-B3-SpanId"
 
-pluginTrace
+buildTrace
   :: forall m cxt env n
   . ( HasWeb m cxt env
     , HasLogger env
+    , HasApp env
     , MonadIO n)
-  => Proxy m -> Proxy cxt -> (forall a. (LogFunc -> LogFunc) -> m a -> m a) -> Plugin env n env
-pluginTrace pm pc fx = do
+  => Proxy m -> Proxy cxt -> (forall a. (LogFunc -> LogFunc) -> m a -> m a) -> Factory n env env
+buildTrace pm pc fx = do
+  AppEnv{..} <- asks (view askApp)
   key <- liftIO L.newKey
-  spc <- liftIO newSpanContext
-  env <- combine
+  spc <- liftIO $ newSpanContext $ rand64 randSeed
+  env <- mconcat
     [ asks $ over (askWeb @m @cxt) $ \Web{..} -> Web{nature = \pc1 pm1 v ma -> nature pc1 pm1 v (fx (g $ L.lookup key v) ma), ..}
     , middlewarePlugin pm pc
         $ \app req resH -> do
@@ -38,8 +40,8 @@ pluginTrace pm pc fx = do
             _         -> do
               htid <- gen spc
               return $ Trace spc { traceId = htid } NoSpan
-          let name = decodeUtf8 (requestMethod req) <> " /" <> T.intercalate "/" (pathInfo req)
-          runWithTrace name nspc
+          let nm = decodeUtf8 (requestMethod req) <> " /" <> T.intercalate "/" (pathInfo req)
+          runWithTrace nm nspc
             $ \Trace{..} -> app req {vault = f (traceId context) spans key $ vault req }
             $ resH . mapResponseHeaders (\hs -> (hTraceId, traceId context):(hSpanId, r spans):hs)
     ]

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 57f587a8401a9f6a7916555bc25579ab0c126e1cd1883bf1ff3ee3c67a8368da
+-- hash: 0193991ac1fa54db853b32a60e981e67152a0418cd9a12e3635c2d9a5257c662
 
 name:           base-database
 version:        0
@@ -28,9 +28,8 @@ library
   build-depends:
       base >=4.11 && <5
     , base-web
-    , boots
+    , boots-app
     , bytestring
-    , data-default
     , microlens
     , monad-logger
     , mtl

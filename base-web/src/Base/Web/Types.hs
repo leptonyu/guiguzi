@@ -1,6 +1,5 @@
 module Base.Web.Types where
 
-import           Base.Dto
 import           Base.Health
 import           Base.Metrics
 import           Boots
@@ -8,15 +7,20 @@ import           Control.Exception
     ( Exception (..)
     , SomeException
     )
-import           Control.Monad.Catch
-import           Control.Monad.Reader
+import           Control.Monad
 import           Data.Default
 import           Data.Kind                           (Type)
 import           Data.Maybe
 import           Data.Proxy
 import           Data.Reflection
 import           Data.String
-import           Data.Swagger                        hiding (name, port)
+import           Data.Swagger                        hiding
+    ( name
+    , port
+    , tags
+    , version
+    )
+import qualified Data.Swagger                        as S
 import           Data.Text                           (Text, pack)
 import           Data.Version
 import           Data.Word
@@ -92,7 +96,7 @@ instance Monad m => FromProp m SwaggerConfig where
     <*> "schema"  .?= "swagger-ui.json"
     <*> "enabled" .?= True
 
-buildWeb
+runWeb
   :: forall m cxt n env
   . ( MonadCatch n
     , MonadIO n
@@ -100,16 +104,16 @@ buildWeb
     , HasWeb m cxt env
     , HasLogger env
     , HasSalak env)
-  => Plugin env n (IO ())
-buildWeb = do
+  => Factory n env (IO ())
+runWeb = do
   (Web{..} :: Web m cxt) <- asks (view askWeb)
-  let AppContext{..} = view askApp context
+  let AppEnv{..} = view askApp context
   SwaggerConfig{..}      <- require "swagger"
   let portText = fromString (show $ port config)
   when enabled $
     logInfo  $ "Swagger enabled: http://"<> fromString (hostname config) <> ":" <> portText <> "/" <> pack urlDir
   logInfo $ "Service started on port(s): " <> portText
-  delay $ logInfo "Service ended"
+  delayA $ logInfo "Service ended"
   let proxy = Proxy @EmptyAPI
   return
     $ serveWarp config
@@ -118,7 +122,7 @@ buildWeb = do
         then reifySymbol urlDir
           $ \pd -> reifySymbol urlSchema
           $ \ps -> serveW (gos pd ps) (context :. EmptyContext) (swaggerSchemaUIServer
-            $ baseInfo (hostname config) name ver (fromIntegral $ port config)
+            $ baseInfo (hostname config) name version (fromIntegral $ port config)
             $ swagge proxy)
         else serveW proxy (context :. EmptyContext) emptyServer
   where
@@ -141,19 +145,19 @@ serveWeb
   -> Bool
   -> Proxy api
   -> ServerT api m
-  -> Plugin env n env
-serveWeb pm pcxt b proxy server =
-  if b
-    then asks
-      $ over askWeb
-      $ \(web :: Web m cxt) -> web { serveW =
-        \p c s -> serveW web (gop p proxy) c
-          $ s :<|> (\v -> hoistServerWithContext proxy (Proxy @'[cxt]) (nature web pcxt pm v) server) }
-    else ask
+  -> Factory n env env
+serveWeb pm pcxt b proxy server = tryBuild b
+  $ asks
+  $ over askWeb
+  $ \(web :: Web m cxt) -> web { serveW =
+    \p c s -> serveW web (gop p proxy) c
+      $ s :<|> (\v -> hoistServerWithContext proxy (Proxy @'[cxt]) (nature web pcxt pm v) server) }
 
 gop :: forall a b. Proxy a -> Proxy b -> Proxy (a :<|> (Vault :> b))
 gop _ _ = Proxy
 
+tryBuild :: Bool -> Factory n env env -> Factory n env env
+tryBuild b p = if b then p else ask
 
 serveWebWithSwagger
   :: forall cxt n m env api
@@ -165,8 +169,8 @@ serveWebWithSwagger
   -> Bool
   -> Proxy api
   -> ServerT api m
-  -> Plugin env n env
-serveWebWithSwagger pm pcxt b proxy server = combine
+  -> Factory n env env
+serveWebWithSwagger pm pcxt b proxy server = mconcat
   [ serveWeb     pm pcxt b proxy server
   , serveSwagger pm pcxt b proxy
   ]
@@ -175,17 +179,15 @@ serveSwagger
   :: forall m cxt api env n
   . ( HasWeb m cxt env
     , HasSwagger api)
-  => Proxy (m :: * -> *) -> Proxy cxt -> Bool -> Proxy api -> Plugin env n env
-serveSwagger _ _ b proxy =
-  if b
-    then asks
-      $ over askWeb
-      $ \(web :: Web m cxt) -> web { swagge = \p -> swagge web (gop p proxy) }
-    else ask
+  => Proxy (m :: * -> *) -> Proxy cxt -> Bool -> Proxy api -> Factory n env env
+serveSwagger _ _ b proxy = tryBuild b
+  $ asks
+  $ over askWeb
+  $ \(web :: Web m cxt) -> web { swagge = \p -> swagge web (gop p proxy) }
 
 
 
-middlewarePlugin :: forall m cxt env n. HasWeb m cxt env => Proxy m -> Proxy cxt -> Middleware -> Plugin env n env
+middlewarePlugin :: forall m cxt env n. HasWeb m cxt env => Proxy m -> Proxy cxt -> Middleware -> Factory n env env
 middlewarePlugin _ _ md = asks $ over askWeb $ \(web :: Web m cxt) -> web { middle = md . middle web }
 
 
@@ -199,7 +201,7 @@ baseInfo
   -> Swagger
 baseInfo hostName n v p s = s
   & info . title   .~ (n <> " API Documents")
-  & info . version .~ pack (showVersion v)
+  & info . S.version .~ pack (showVersion v)
   & host ?~ Host hostName (Just $ fromIntegral p)
 
 data SwaggerTag (name :: Symbol) (desp :: Symbol)

@@ -4,10 +4,7 @@ name:                base-main
 
 dependencies:
   - base >= 4.11 && < 5
-  - boots
-  - wai
-  - salak
-  - data-default
+  - boots-app
   - servant-server
   - microlens
   - mtl
@@ -15,7 +12,6 @@ dependencies:
   - base-database
   - base-redis
   - base-client
-  - base-dto
 
 library:
   source-dirs: src

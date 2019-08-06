@@ -16,4 +16,4 @@ demo =  do
   logError "error"
   return "Hello"
 
-main = start version "guiguzi" (Proxy @DemoAPI) demoServer
+main = start Paths_base_main.version "guiguzi" (Proxy @DemoAPI) demoServer

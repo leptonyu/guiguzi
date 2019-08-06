@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: be56c22d42445ef67d006247d76f7f30732bc6d529d8b5a02edda993a4dfeb34
+-- hash: 029e283fc17b2132956bab93a490377552ef6b783597037d02666ce3a154c6f6
 
 name:           base-client
 version:        0
@@ -27,7 +27,7 @@ library
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
       base >=4.11 && <5
-    , boots
+    , boots-app
     , data-default
     , http-client
     , microlens

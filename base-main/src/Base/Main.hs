@@ -2,15 +2,12 @@ module Base.Main where
 
 import           Base.Client
 import           Base.Database
-import           Base.Dto
 import           Base.Env
 import           Base.Redis
 import           Base.Web
 import           Boots
-import           Control.Monad.Reader
 import           Data.Maybe
 import           Data.Proxy
-import           Data.String
 import           Data.Version
 import           Lens.Micro
 import           Servant
@@ -24,19 +21,15 @@ start
   -> ServerT api (App MainEnv)
   -> IO ()
 start ver appname proxy server = boot $ do
-  sourcePack <- pluginSalak appname
-  promote sourcePack $ do
-    name     <- fromMaybe (fromString appname) <$> require "application.name"
-    app      <- liftIO $ newApp name ver
-    logFunc  <- pluginLogger (name <> "," <> inst app)
-    promote Simple{..} $ do
-      client               <- pluginClient
-      (database, dbHealth) <- pluginDatabase
-      (redis,    rdHealth) <- pluginRedis
-      promote MainEnv{..}
-        $ pluginWeb proxy server
-        $ asks
-        $ over (askWeb @(App MainEnv) @MainEnv . askHealth)
-        $ combineHealth
-        $ catMaybes [dbHealth, rdHealth]
+  app <- buildApp appname ver
+  within app $ do
+    client               <- buildClient
+    (database, dbHealth) <- buildDatabase
+    (redis,    rdHealth) <- buildRedis
+    within MainEnv{..}
+      $ buildWeb proxy server
+      $ asks
+      $ over (askWeb @(App MainEnv) @MainEnv . askHealth)
+      $ combineHealth
+      $ catMaybes [dbHealth, rdHealth]
 

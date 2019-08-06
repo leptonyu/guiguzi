@@ -8,7 +8,6 @@ dependencies:
   - scientific
   - text
   - unordered-containers
-  - mwc-random
   - microlens
   - time
 

@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.31.1.
+-- This file has been generated from package.yaml by hpack version 0.31.2.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 014bdedbd0d360c29f5ac06bd56e4db1cd2e9833e3c1c1693cdb545ca7a04b51
+-- hash: 5d86b99abebf2c83b8079576f0bec0796f9a186afbb8b6f11b7b837feef3f105
 
 name:           base-main
 version:        0
@@ -38,7 +38,7 @@ library
     , servant-server
   default-language: Haskell2010
 
-executable guiguzi-exe
+executable guiguzi
   main-is: Main.hs
   other-modules:
       Paths_base_main

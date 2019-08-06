@@ -14,7 +14,7 @@ install:
 - curl -sSL https://get.haskellstack.org/ | sh
 - stack --version
 script:
-- stack --local-bin-path /tmp install --system-ghc --test --no-run-tests --profile
+- cd $TRAVIS_BUILD_DIR && stack --local-bin-path /tmp install --test --no-run-tests --profile
 deploy:
   provider: releases
   api_key:

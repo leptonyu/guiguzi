@@ -12,13 +12,13 @@ matrix:
 install:
 - curl -sSL https://get.haskellstack.org/ | sh
 - stack --version
-- stack --local-bin-path /tmp install --system-ghc --test --no-run-tests
 script:
-- stack test
+- stack --local-bin-path /tmp install --system-ghc --test --no-run-tests
 deploy:
   provider: releases
   api_key:
     secure: N1G2NzhYKdNVtXJcbI94eWgUiVEtiKpyFtBTfDOFXRoty+EwupuXtoLChLIEFrcp7dYJJ3IUh8DQMDEJzAfrjXeBi5C7umb6G3Zrks9ILQKbq4jVMJMRzf6mcZ7KENhFdVvy1Js4Qs/jRV1nOfikINHKsI6ltPlDpUvQINPKu5j0Odqc9jIIc46BVxqZ21ixJpKQthPGTX2qjDzZsORtXJbxSdEiJUV8Dt3ynerqADcIdA9tfPEPKmy8I1Zim7sYxpFUaiGJeN9hgg0jXOuOObyLhJrfbyMyfzbMtM/uSsqzRmFDrubRO+t6QZUiY+0cb/l2MNyHIeTg2tJEZN4CzBIGs5m/WIkcizxP1ywIA5bwGY4V2b4sTlf1Oevr6pESoJJ2hXAkGdr2YDGRfb3zMc+shXYi/eoMXs+phLnt5iYzjPNgD1aBkndyolBi3WBB8DlSkKyD0KpGptuWo+8bP8vXuknbm6xNKIv9slEvYwtIXjSBg0xtoVvApkUFdv/3WWJIsyqwHojsByWWDIig4KULhRJEyXgGjHJbQB2MUnskSsRSTr6Wb+oDDTYuAujPKRAOnnLFXXJK8c/OOMbrFDnyY2pIA7980L5O9rdeo/MIzPsSDm0TWJHGC9Cxh5NJmjjc5kkuK49aXbuXLNd9yChgMlJAaXelMSKtrAs5yow=
-  file: "/tmp/guiguzi-exe"
+  file: "/tmp/guiguzi"
   on:
     repo: leptonyu/guiguzi
+    tags: true

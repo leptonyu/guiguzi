@@ -20,7 +20,7 @@ library:
   - Base.Main
 
 executables:
-  guiguzi-exe:
+  guiguzi:
     source-dirs:      main
     main:             Main.hs
     dependencies:

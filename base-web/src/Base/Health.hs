@@ -1,5 +1,6 @@
 module Base.Health where
 
+import           Boots
 import           Control.Exception   (SomeException, catch)
 import           Data.Aeson
 import qualified Data.HashMap.Strict as HM
@@ -32,7 +33,6 @@ class HasHealth env where
 instance HasHealth (IO Health) where
   askHealth = id
 
-
 type CheckHealth = (Text, IO HealthStatus)
 
 insertHealth :: CheckHealth -> IO Health -> IO Health
@@ -43,3 +43,16 @@ insertHealth (na, ios) ior = do
 
 combineHealth :: [CheckHealth] -> IO Health -> IO Health
 combineHealth = flip (foldr insertHealth)
+
+buildHealth
+  :: forall env n. (HasHealth env)
+  => CheckHealth
+  -> Factory n env env
+buildHealth healths = asks
+      $ over askHealth
+      $ insertHealth healths
+
+
+
+
+

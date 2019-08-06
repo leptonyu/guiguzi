@@ -52,7 +52,6 @@ instance Monad m => FromProp m WebConfig where
 data Web m cxt = Web
   { context:: !cxt
   , config :: !WebConfig
-  , health :: !(IO Health)
   , store  :: !Store
   , nature :: forall a. Proxy cxt -> Proxy m -> Vault -> m a -> Servant.Handler a
   , middle :: !Middleware
@@ -74,13 +73,13 @@ instance HasSalak cxt => HasSalak (Web m cxt) where
   askSourcePack = askContext . askSourcePack
 instance HasApp cxt => HasApp (Web m cxt) where
   askApp = askContext . askApp
-instance HasHealth (Web m cxt) where
-  askHealth = lens health (\x y -> x { health = y })
+instance HasHealth cxt => HasHealth (Web m cxt) where
+  askHealth = askContext . askHealth
 instance HasMetrics (Web m cxt) where
   askMetrics = lens store (\x y -> x { store = y })
 
 defWeb :: cxt -> Store -> WebConfig -> Web Servant.Handler cxt
-defWeb cxt s wc = Web cxt wc emptyHealth s (\_ _ _ -> id) id serveWithContext toSwagger
+defWeb cxt s wc = Web cxt wc s (\_ _ _ -> id) id serveWithContext toSwagger
 
 -- ** Swagger
 -- | Swagger Configuration

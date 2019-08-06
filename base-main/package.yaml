@@ -9,8 +9,6 @@ dependencies:
   - microlens
   - mtl
   - base-web
-  - base-database
-  - base-redis
   - base-client
 
 library:
@@ -25,4 +23,6 @@ executables:
     main:             Main.hs
     dependencies:
     - base-main
+    - base-redis
+    - base-database
     - servant-server

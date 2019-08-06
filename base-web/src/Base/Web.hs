@@ -7,7 +7,6 @@ module Base.Web(
   , module Base.Health
 
   , buildWeb
-  , buildHealth
   , HasSwagger
   ) where
 
@@ -21,7 +20,6 @@ import           Base.Middleware.Trace
 import           Base.Web.Types
 
 import           Boots
-import           Data.Maybe
 import           Lens.Micro
 import           Lens.Micro.Extras
 import           Servant
@@ -29,15 +27,6 @@ import           Servant.Swagger
 
 toWeb :: Web Servant.Handler cxt -> Web (App cxt) cxt
 toWeb Web{..} = Web{ nature = \pc _ v ma -> nature pc (Proxy @Servant.Handler) v $ liftIO $ runAppT context ma ,..}
-
-buildHealth
-  :: forall cxt n. (HasApp cxt)
-  => [Maybe CheckHealth]
-  -> Factory n (Web (App cxt) cxt) (Web (App cxt) cxt)
-buildHealth healths = asks
-      $ over (askWeb @(App cxt) @cxt . askHealth)
-      $ combineHealth
-      $ catMaybes healths
 
 
 buildWeb
@@ -48,6 +37,7 @@ buildWeb
     , HasSalak cxt
     , HasApp cxt
     , HasHttpClient cxt
+    , HasHealth cxt
     , HasSwagger api
     , HasServer api '[cxt])
   => Proxy api

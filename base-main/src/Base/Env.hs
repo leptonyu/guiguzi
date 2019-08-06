@@ -1,33 +1,35 @@
 module Base.Env where
 
 import           Base.Client
-import           Base.Database
-import           Base.Redis
+import           Base.Health
 import           Boots
 import           Lens.Micro
 
-data MainEnv = MainEnv
-  { app      :: !AppEnv
+data MainEnv db = MainEnv
+  { app    :: !AppEnv
+  , health :: !(IO Health)
   -- Client
-  , client   :: !HttpClient
-  -- Db
-  , database :: DB
-  , redis    :: REDIS
+  , client :: !HttpClient
+  -- dbs
+  , db     :: !db
   }
 
-class HasMainEnv env where
-  askMainEnv :: Lens' env MainEnv
-instance HasMainEnv MainEnv where
+data EmptyDB = EmptyDB
+
+class HasMainEnv db env where
+  askMainEnv :: Lens' env (MainEnv db)
+instance HasMainEnv db (MainEnv db) where
   askMainEnv = id
-instance HasSalak MainEnv where
+instance HasSalak (MainEnv db) where
   askSourcePack = askApp . askSourcePack
-instance HasLogger MainEnv where
+instance HasLogger (MainEnv db) where
   askLogger = askApp . askLogger
-instance HasDataSource MainEnv where
-  askDataSource = lens database (\x y -> x { database = y})
-instance HasRedis MainEnv where
-  askRedis = lens redis (\x y -> x { redis = y})
-instance HasApp MainEnv where
+instance HasHealth (MainEnv db) where
+  askHealth = lens health (\x y -> x { health = y})
+instance HasApp (MainEnv db) where
   askApp = lens app (\x y -> x { app = y})
-instance HasHttpClient MainEnv where
+instance HasHttpClient (MainEnv db) where
   askHttpClient = lens client (\x y -> x { client = y})
+
+askDb :: Lens' (MainEnv db) db
+askDb = lens db (\x y -> x { db = y })

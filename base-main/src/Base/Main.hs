@@ -1,9 +1,7 @@
 module Base.Main where
 
 import           Base.Client
-import           Base.Database
 import           Base.Env
-import           Base.Redis
 import           Base.Web
 import           Boots
 import           Data.Proxy
@@ -11,19 +9,19 @@ import           Data.Version
 import           Servant
 
 start
-  :: forall api
-  .( HasSwagger api, HasServer api '[MainEnv])
+  :: forall api db
+  .( HasSwagger api, HasServer api '[MainEnv db])
   => Version
   -> String
+  -> Factory IO (MainEnv EmptyDB) (MainEnv db)
   -> Proxy api
-  -> ServerT api (App MainEnv)
+  -> ServerT api (App (MainEnv db))
   -> IO ()
-start ver appname proxy server = boot $ do
+start ver appname fac proxy server = boot $ do
   app <- buildApp appname ver
   within app $ do
-    client               <- buildClient
-    (database, dbHealth) <- buildDatabase
-    (redis,    rdHealth) <- buildRedis
-    within MainEnv{..}
-      $ buildWeb proxy server
-      $ buildHealth [dbHealth, rdHealth]
+    client <- buildClient
+    let
+      health = emptyHealth
+      db = EmptyDB
+    within MainEnv{..} fac >>> buildWeb proxy server ask

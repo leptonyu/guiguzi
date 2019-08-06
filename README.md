@@ -21,6 +21,7 @@
   - [PostgreSQL](https://hackage.haskell.org/package/persistent-postgresql)
   - [SQLite](https://hackage.haskell.org/package/persistent-sqlite)
 - [Redis](https://hackage.haskell.org/package/hedis) with health check
+- [Rabbitmq](https://hackage.haskell.org/package/amqp) with health check
 - [Http Client](https://hackage.haskell.org/package/http-client)
 - [consul](https://www.consul.io), service networking.
 - TODO

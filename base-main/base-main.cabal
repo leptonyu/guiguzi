@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5d86b99abebf2c83b8079576f0bec0796f9a186afbb8b6f11b7b837feef3f105
+-- hash: 58263b4de061178d175c1eb72b6bdfe192fae99a1cb61293839447748b536980
 
 name:           base-main
 version:        0
@@ -29,8 +29,6 @@ library
   build-depends:
       base >=4.11 && <5
     , base-client
-    , base-database
-    , base-redis
     , base-web
     , boots-app
     , microlens

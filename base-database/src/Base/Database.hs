@@ -41,17 +41,22 @@ class HasDataSource env where
 instance HasDataSource DB where
   askDataSource = id
 
-buildDatabase :: (HasSalak env, HasLogger env, MonadThrow m, MonadUnliftIO m) => Factory m env (DB, Maybe CheckHealth)
+buildDatabase
+  :: (HasSalak env, HasLogger env, HasHealth env, MonadThrow m, MonadUnliftIO m)
+  => Factory m env (env, DB)
 buildDatabase = do
+  env     <- ask
   enabled <- fromMaybe True <$> require "datasource.enabled"
   if enabled
     then do
-      dbtype <- fromMaybe SQLite <$> require "datasource.type"
+      dbtype   <- fromMaybe SQLite <$> require "datasource.type"
       logInfo $ "Loading database " <> T.pack (show dbtype)
-      case dbtype of
+      (db, ck) <- case dbtype of
         PostgreSQL -> require "datasource.postgresql" >>= buildPostresql
         _          -> require "datasource.sqlite"     >>= buildSqlite
-    else return (throw DatabaseNotInitializedException, Nothing)
+      env1     <- buildHealth ck
+      return (env1, db)
+    else return (env, throw DatabaseNotInitializedException)
 
 data DBE = DBE
   { dbelog :: !Boots.LogFunc
@@ -94,7 +99,7 @@ instance Monad m => FromProp m PGConfig where
     <*> "max-conns" .?= 10
 
 
-buildPostresql :: (HasLogger env, MonadThrow m, MonadUnliftIO m) => PGConfig -> Factory m env (DB, Maybe CheckHealth)
+buildPostresql :: (HasLogger env, MonadThrow m, MonadUnliftIO m) => PGConfig -> Factory m env (DB, CheckHealth)
 buildPostresql PGConfig{..} = do
   lf  <- askLoggerIO
   lfc <- asks (view askLogger)
@@ -108,7 +113,7 @@ buildPostresql PGConfig{..} = do
   conn <- natTrans (`runLoggingT` lf) lift
     $ wrap
     $ withPostgresqlPool go (fromIntegral maxConns)
-  return (DB conn, Just ("PostgreSQL", check lfc conn))
+  return (DB conn, ("PostgreSQL", check lfc conn))
 
 
 data SQLiteConfig = SQLiteConfig
@@ -121,12 +126,12 @@ instance Monad m => FromProp m SQLiteConfig where
     <$> "conn"      .?= ":memory:"
     <*> "max-conns" .?= 1
 
-buildSqlite :: (HasLogger env, MonadThrow m, MonadUnliftIO m) => SQLiteConfig -> Factory m env (DB, Maybe CheckHealth)
+buildSqlite :: (HasLogger env, MonadThrow m, MonadUnliftIO m) => SQLiteConfig -> Factory m env (DB, CheckHealth)
 buildSqlite SQLiteConfig{..} = do
   lf   <- askLoggerIO
   lfc  <- asks (view askLogger)
   conn <- natTrans (`runLoggingT` lf) lift
     $ wrap
     $ withSqlitePool connStr (fromIntegral maxConns)
-  return (DB conn, Just ("SQLite", check lfc conn))
+  return (DB conn, ("SQLite", check lfc conn))
 

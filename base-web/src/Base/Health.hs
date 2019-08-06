@@ -1,13 +1,15 @@
 module Base.Health where
 
 import           Boots
-import           Control.Exception   (SomeException, catch)
+import           Control.Concurrent.MVar
+import           Control.Exception       (SomeException, catch)
 import           Data.Aeson
-import qualified Data.HashMap.Strict as HM
-import           Data.Swagger.Schema (ToSchema)
-import           Data.Text           (Text, pack)
+import qualified Data.HashMap.Strict     as HM
+import           Data.Swagger.Schema     (ToSchema)
+import           Data.Text               (Text, pack)
 import           GHC.Generics
 import           Lens.Micro
+import           Lens.Micro.Extras
 
 data HealthStatus = UP | DOWN deriving (Eq, Show, Generic, ToJSON)
 
@@ -20,17 +22,22 @@ data Health = Health
   , details :: !(HM.HashMap Text Health)
   } deriving (Eq, Show, Generic)
 
-emptyHealth :: IO Health
-emptyHealth = return (Health UP Nothing HM.empty)
+data HealthRef = HealthRef (MVar (IO Health))
+
+emptyHealth :: IO HealthRef
+emptyHealth = do
+  let io = return (Health UP Nothing HM.empty)
+  f <- newMVar io
+  return (HealthRef f)
 
 instance ToJSON Health where
   toJSON = genericToJSON defaultOptions
     { omitNothingFields = True }
 
 class HasHealth env where
-  askHealth :: Lens' env (IO Health)
+  askHealth :: Lens' env HealthRef
 
-instance HasHealth (IO Health) where
+instance HasHealth HealthRef where
   askHealth = id
 
 type CheckHealth = (Text, IO HealthStatus)
@@ -45,12 +52,12 @@ combineHealth :: [CheckHealth] -> IO Health -> IO Health
 combineHealth = flip (foldr insertHealth)
 
 buildHealth
-  :: forall env n. (HasHealth env)
+  :: forall env n. (MonadIO n, HasHealth env)
   => CheckHealth
-  -> Factory n env env
-buildHealth healths = asks
-      $ over askHealth
-      $ insertHealth healths
+  -> Factory n env ()
+buildHealth healths = do
+  HealthRef href <- asks (view askHealth)
+  liftIO $ modifyMVar_ href $ return . insertHealth healths
 
 
 

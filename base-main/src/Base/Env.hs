@@ -7,7 +7,7 @@ import           Lens.Micro
 
 data MainEnv db = MainEnv
   { app    :: !AppEnv
-  , health :: !(IO Health)
+  , health :: !HealthRef
   -- Client
   , client :: !HttpClient
   -- dbs

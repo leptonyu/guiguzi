@@ -33,7 +33,8 @@ demo =  do
 main = start Paths_base_main.version "guiguzi" go (Proxy @DemoAPI) demoServer
   where
     go = do
-      (env1, redis)           <- buildRedis
-      (MainEnv{..}, database) <- within env1 buildDatabase
+      redis       <- buildRedis
+      database    <- buildDatabase
+      MainEnv{..} <- ask
       return MainEnv{db=PDB{..},..}
 

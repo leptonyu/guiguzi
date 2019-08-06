@@ -21,7 +21,6 @@ start ver appname fac proxy server = boot $ do
   app <- buildApp appname ver
   within app $ do
     client <- buildClient
-    let
-      health = emptyHealth
-      db = EmptyDB
+    health <- liftIO emptyHealth
+    let db = EmptyDB
     within MainEnv{..} fac >>> buildWeb proxy server ask

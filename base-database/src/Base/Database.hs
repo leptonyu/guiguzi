@@ -43,9 +43,8 @@ instance HasDataSource DB where
 
 buildDatabase
   :: (HasSalak env, HasLogger env, HasHealth env, MonadThrow m, MonadUnliftIO m)
-  => Factory m env (env, DB)
+  => Factory m env DB
 buildDatabase = do
-  env     <- ask
   enabled <- fromMaybe True <$> require "datasource.enabled"
   if enabled
     then do
@@ -54,9 +53,9 @@ buildDatabase = do
       (db, ck) <- case dbtype of
         PostgreSQL -> require "datasource.postgresql" >>= buildPostresql
         _          -> require "datasource.sqlite"     >>= buildSqlite
-      env1     <- buildHealth ck
-      return (env1, db)
-    else return (env, throw DatabaseNotInitializedException)
+      buildHealth ck
+      return db
+    else return $ throw DatabaseNotInitializedException
 
 data DBE = DBE
   { dbelog :: !Boots.LogFunc

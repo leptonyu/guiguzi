@@ -51,15 +51,14 @@ check (REDIS c) = runRedis c ping >>= go
 
 buildRedis
   :: (MonadCatch m, MonadIO m, HasSalak env, HasLogger env, HasHealth env)
-  => Factory m env (env, REDIS)
+  => Factory m env REDIS
 buildRedis = do
-  env     <- ask
   enabled <- fromMaybe True <$> require "redis.enabled"
   if enabled
     then do
       ci    <- require "redis"
       logInfo "Redis loading"
       rd    <- REDIS <$> bracket (liftIO $ connect ci) (liftIO . disconnect)
-      env1  <- within env $ buildHealth ("redis", check rd)
-      return (env1, rd)
-    else return (env, throw RedisNotInitializedException)
+      buildHealth ("redis", check rd)
+      return rd
+    else return (throw RedisNotInitializedException)

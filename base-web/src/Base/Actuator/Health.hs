@@ -4,7 +4,8 @@ import           Base.Actuator
 import           Base.Health
 import           Base.Web.Types
 import           Boots
-import           Data.Aeson        (encode)
+import           Control.Concurrent.MVar
+import           Data.Aeson              (encode)
 import           Lens.Micro.Extras
 import           Servant
 
@@ -19,8 +20,10 @@ actuatorHealth
     , MonadIO n
     , MonadThrow n)
   => Proxy m -> Proxy cxt -> ActuatorConfig -> Factory n env env
-actuatorHealth pm pc ac = asks (view askHealth)
-  >>= newActuator pm pc ac "health" (Proxy @HealthEndpoint) . liftIO . go
+actuatorHealth pm pc ac = do
+  HealthRef ref <- asks (view askHealth)
+  liftIO (readMVar ref)
+    >>= newActuator pm pc ac "health" (Proxy @HealthEndpoint) . liftIO . go
   where
     go health = do
       h@Health{..} <- health

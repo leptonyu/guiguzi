@@ -10,7 +10,7 @@ packages:
 extra-deps:
 - boots-0.1
 - git: https://github.com/leptonyu/boots.git
-  commit: e723b62f9623761d243cf8a7098b3f2a40382399
+  commit: c3911f1d36c9de2242b7fcc43f494fb97c409877
   subdirs:
   - boots-app
 - git: https://github.com/leptonyu/salak.git

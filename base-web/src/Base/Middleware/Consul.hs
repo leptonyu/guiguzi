@@ -23,7 +23,7 @@ buildConsul
     , MonadCatch n)
   => Proxy m -> Proxy cxt -> Factory n env env
 buildConsul _ _ = do
-  b  <- fromMaybe True <$> require "consul.discovery.enabled"
+  b  <- fromMaybe False <$> require "consul.discovery.enabled"
   tryBuild b $ do
     env <- ask
     let AppEnv{..}    = view askApp env

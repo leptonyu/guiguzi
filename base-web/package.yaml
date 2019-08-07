@@ -37,7 +37,7 @@ library:
   - Base.Actuator
   - Base.Metrics
 
-  - Base.Nature
+  - Base.Vault
   
   other-modules:
   - Base.Web.Types

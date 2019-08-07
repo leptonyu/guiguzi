@@ -36,6 +36,8 @@ library:
   - Base.Health
   - Base.Actuator
   - Base.Metrics
+
+  - Base.Nature
   
   other-modules:
   - Base.Web.Types

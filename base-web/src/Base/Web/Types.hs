@@ -2,6 +2,7 @@ module Base.Web.Types where
 
 import           Base.Health
 import           Base.Metrics
+import           Base.Vault
 import           Boots
 import           Control.Exception
     ( Exception (..)
@@ -75,6 +76,8 @@ instance HasApp cxt => HasApp (Web m cxt) where
   askApp = askContext . askApp
 instance HasHealth cxt => HasHealth (Web m cxt) where
   askHealth = askContext . askHealth
+instance HasVault c cxt => HasVault c (Web m cxt) where
+  askVault = askContext . askVault
 instance HasMetrics (Web m cxt) where
   askMetrics = lens store (\x y -> x { store = y })
 

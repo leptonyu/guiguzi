@@ -1,5 +1,6 @@
 module Base.Middleware.Trace where
 
+import           Base.Vault
 import           Base.Web.Types
 import           Boots
 import           Data.Opentracing
@@ -21,17 +22,19 @@ hSpanId = "X-B3-SpanId"
 buildTrace
   :: forall m cxt env n
   . ( HasWeb m cxt env
+    , HasVault cxt env
     , HasLogger env
+    , HasLogger cxt
     , HasApp env
     , MonadIO n)
-  => Proxy m -> Proxy cxt -> (forall a. (LogFunc -> LogFunc) -> m a -> m a) -> Factory n env env
-buildTrace pm pc fx = do
+  => Proxy m -> Proxy cxt ->  Factory n env env
+buildTrace pm pc = do
   AppEnv{..} <- asks (view askApp)
   key <- liftIO L.newKey
   spc <- liftIO $ newSpanContext $ rand64 randSeed
+  modifyVault @cxt $ \fy v e -> over askLogger (g $ L.lookup key v) (fy v e)
   env <- mconcat
-    [ asks $ over (askWeb @m @cxt) $ \Web{..} -> Web{nature = \pc1 pm1 v ma -> nature pc1 pm1 v (fx (g $ L.lookup key v) ma), ..}
-    , middlewarePlugin pm pc
+    [ middlewarePlugin pm pc
         $ \app req resH -> do
           nspc <- case Prelude.lookup hTraceId (requestHeaders req) of
             Just htid -> case Prelude.lookup hSpanId (requestHeaders req) of

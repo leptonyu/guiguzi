@@ -5,9 +5,9 @@ module Base.Web(
   , module Base.Middleware.Trace
 
   , module Base.Health
+  , module Base.Vault
 
   , buildWeb
-  , runWebApp
   , HasSwagger
   ) where
 
@@ -20,19 +20,14 @@ import           Base.Middleware.Error
 import           Base.Middleware.Trace
 import           Base.Web.Types
 
+import           Base.Vault
 import           Boots
-import           Lens.Micro
 import           Lens.Micro.Extras
 import           Servant
 import           Servant.Swagger
 
-toWeb :: Web IO cxt -> Web (App cxt) cxt
-toWeb Web{..} = Web{ nature = \pc _ v ma -> nature pc (Proxy @IO) v $ liftIO $ runAppT context ma ,..}
-
-runWebApp :: forall m cxt env a. (HasWeb m cxt env, MonadIO m) => env -> Vault -> AppT cxt m a -> m a
-runWebApp env v ma =
-  let Web{..} = view askWeb env :: Web m cxt
-  in liftIO $ nature (Proxy @cxt) (Proxy @m) v (runAppT context ma)
+toWeb :: HasVault cxt cxt => Web IO cxt -> Web (App cxt) cxt
+toWeb Web{..} = Web{ nature = \_ _ v -> runVault context v ,..}
 
 buildWeb
   :: forall cxt n api
@@ -41,6 +36,7 @@ buildWeb
     , HasLogger cxt
     , HasSalak cxt
     , HasApp cxt
+    , HasVault cxt cxt
     , HasHttpClient cxt
     , HasHealth cxt
     , HasSwagger api
@@ -60,7 +56,7 @@ buildWeb proxy server mid = do
   logInfo $ "Start Service [" <> name <> "] ..."
   polish web0
     [ mid
-    , buildTrace          proxym proxycxt (local . over askLogger)
+    , buildTrace          proxym proxycxt
     , buildActuators      proxym proxycxt
     , serveWebWithSwagger proxym proxycxt True proxy server
     , buildError          proxym proxycxt

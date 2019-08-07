@@ -53,7 +53,7 @@ data Web m cxt = Web
   { context:: !cxt
   , config :: !WebConfig
   , store  :: !Store
-  , nature :: forall a. Proxy cxt -> Proxy m -> Vault -> m a -> Servant.Handler a
+  , nature :: forall a. Proxy cxt -> Proxy m -> Vault -> m a -> IO a
   , middle :: !Middleware
   , serveW :: forall api. HasServer api '[cxt] => Proxy api -> Context '[cxt] -> Server api -> Application
   , swagge :: forall api. HasSwagger api => Proxy api -> Swagger
@@ -78,7 +78,7 @@ instance HasHealth cxt => HasHealth (Web m cxt) where
 instance HasMetrics (Web m cxt) where
   askMetrics = lens store (\x y -> x { store = y })
 
-defWeb :: cxt -> Store -> WebConfig -> Web Servant.Handler cxt
+defWeb :: cxt -> Store -> WebConfig -> Web IO cxt
 defWeb cxt s wc = Web cxt wc s (\_ _ _ -> id) id serveWithContext toSwagger
 
 -- ** Swagger
@@ -150,7 +150,10 @@ serveWeb pm pcxt b proxy server = tryBuild b
   $ over askWeb
   $ \(web :: Web m cxt) -> web { serveW =
     \p c s -> serveW web (gop p proxy) c
-      $ s :<|> (\v -> hoistServerWithContext proxy (Proxy @'[cxt]) (nature web pcxt pm v) server) }
+      $ s :<|> (\v -> hoistServerWithContext proxy (Proxy @'[cxt]) (go . nature web pcxt pm v) server) }
+  where
+    go :: IO a -> Servant.Handler a
+    go = liftIO
 
 gop :: forall a b. Proxy a -> Proxy b -> Proxy (a :<|> (Vault :> b))
 gop _ _ = Proxy

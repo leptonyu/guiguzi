@@ -7,6 +7,7 @@ module Base.Web(
   , module Base.Health
 
   , buildWeb
+  , runWebApp
   , HasSwagger
   ) where
 
@@ -25,9 +26,13 @@ import           Lens.Micro.Extras
 import           Servant
 import           Servant.Swagger
 
-toWeb :: Web Servant.Handler cxt -> Web (App cxt) cxt
-toWeb Web{..} = Web{ nature = \pc _ v ma -> nature pc (Proxy @Servant.Handler) v $ liftIO $ runAppT context ma ,..}
+toWeb :: Web IO cxt -> Web (App cxt) cxt
+toWeb Web{..} = Web{ nature = \pc _ v ma -> nature pc (Proxy @IO) v $ liftIO $ runAppT context ma ,..}
 
+runWebApp :: forall m cxt env a. (HasWeb m cxt env, MonadIO m) => env -> Vault -> AppT cxt m a -> m a
+runWebApp env v ma =
+  let Web{..} = view askWeb env :: Web m cxt
+  in liftIO $ nature (Proxy @cxt) (Proxy @m) v (runAppT context ma)
 
 buildWeb
   :: forall cxt n api

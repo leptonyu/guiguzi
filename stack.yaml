@@ -1,4 +1,4 @@
-resolver: nightly-2019-08-04
+resolver: nightly-2019-08-06
 packages:
 - base-web
 - base-client
@@ -10,10 +10,7 @@ packages:
 - consul
 extra-deps:
 - boots-0.1
-- git: https://github.com/leptonyu/boots.git
-  commit: c3911f1d36c9de2242b7fcc43f494fb97c409877
-  subdirs:
-  - boots-app
+- boots-app-0.1.0.2
 - git: https://github.com/leptonyu/salak.git
   commit: d6a449996650a62e9b66850add8c15083674001d
   subdirs:

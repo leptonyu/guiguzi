@@ -16,14 +16,3 @@ library:
   exposed-modules:
   - Base.Env
   - Base.Main
-
-executables:
-  guiguzi:
-    source-dirs:      main
-    main:             Main.hs
-    dependencies:
-    - base-main
-    - base-redis
-    - base-database
-    - servant-server
-    - servant-swagger

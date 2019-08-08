@@ -1,0 +1,20 @@
+_common: !include "../common.yaml"
+name:                main
+<<: *legal
+
+dependencies:
+  - base >= 4.11 && < 5
+
+executables:
+  guiguzi:
+    source-dirs:      .
+    main:             Main.hs
+    dependencies:
+    - base-main
+    - base-web
+    - base-redis
+    # - base-database
+    - boots-app
+    - microlens
+    - servant-server
+    - servant-swagger

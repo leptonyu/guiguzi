@@ -1,4 +1,4 @@
-FROM ghc-8.6.5 as builder
+FROM icymint/ghc:8.6.5 as builder
 
 ADD . /data
 

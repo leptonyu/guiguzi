@@ -2,7 +2,6 @@ module Base.Main where
 
 import           Base.Client
 import           Base.Env
-import           Base.Vault
 import           Base.Web
 import           Boots
 import           Data.Proxy
@@ -24,7 +23,6 @@ start ver appname fac proxy server = boot $ do
   within app $ do
     client <- buildClient
     health <- liftIO emptyHealth
-    vaults <- liftIO newVaultCake
     dbn <- within MainEnv{db=EmptyDB, ..} fac
-    within MainEnv{ db=dbn, vaults = unsafeCoerce vaults, ..}
+    within MainEnv{ db=dbn, app = unsafeCoerce app, ..}
       $ buildWeb proxy server ask

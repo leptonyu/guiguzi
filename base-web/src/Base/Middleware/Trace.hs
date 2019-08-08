@@ -1,14 +1,11 @@
 module Base.Middleware.Trace where
 
-import           Base.Vault
 import           Base.Web.Types
 import           Boots
 import           Data.Opentracing
 import           Data.Proxy
 import qualified Data.Text          as T
 import           Data.Text.Encoding (decodeUtf8)
-import qualified Data.Vault.Lazy    as L
-import           Lens.Micro
 import           Lens.Micro.Extras
 import           Network.HTTP.Types
 import           Network.Wai
@@ -22,19 +19,15 @@ hSpanId = "X-B3-SpanId"
 buildTrace
   :: forall m cxt env n
   . ( HasWeb m cxt env
-    , HasVault cxt env
     , HasLogger env
-    , HasLogger cxt
-    , HasApp env
+    , HasApp cxt env
     , MonadIO n)
   => Proxy m -> Proxy cxt ->  Factory n env env
 buildTrace pm pc = do
-  AppEnv{..} <- asks (view askApp)
-  key <- liftIO L.newKey
+  (AppEnv{..} :: AppEnv cxt) <- asks (view askApp)
+  logFunc    <- asks (view askLogger)
   spc <- liftIO $ newSpanContext $ rand64 randSeed
-  modifyVault @cxt $ \fy v e -> over askLogger (g $ L.lookup key v) (fy v e)
-  env <- mconcat
-    [ middlewarePlugin pm pc
+  env <- middlewarePlugin pm pc
         $ \app req resH -> do
           nspc <- case Prelude.lookup hTraceId (requestHeaders req) of
             Just htid -> case Prelude.lookup hSpanId (requestHeaders req) of
@@ -45,17 +38,14 @@ buildTrace pm pc = do
               return $ Trace spc { traceId = htid } NoSpan
           let nm = decodeUtf8 (requestMethod req) <> " /" <> T.intercalate "/" (pathInfo req)
           runWithTrace nm nspc
-            $ \Trace{..} -> app req {vault = f (traceId context) spans key $ vault req }
+            $ \Trace{..} -> app req {vault = addTrace (f spans $ traceId context) logFunc $ vault req }
             $ resH . mapResponseHeaders (\hs -> (hTraceId, traceId context):(hSpanId, r spans):hs)
-    ]
   logInfo "Load plugin trace."
   return env
   where
-    g (Just a) = addTrace a
-    g _        = id
-    f _   NoSpan      _ = id
-    f tid (SpanId i)  k = L.insert k (decodeUtf8 $ tid <> "," <> i)
-    f tid (SpanRef t) k = L.insert k (decodeUtf8 $ tid <> "," <> spanId t)
+    f NoSpan      _   = Nothing
+    f (SpanId i)  tid = Just $ decodeUtf8 $ tid <> "," <> i
+    f (SpanRef t) tid = Just $ decodeUtf8 $ tid <> "," <> spanId t
     r NoSpan      = ""
     r (SpanId  i) = i
     r (SpanRef t) = spanId t

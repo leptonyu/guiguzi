@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 58263b4de061178d175c1eb72b6bdfe192fae99a1cb61293839447748b536980
+-- hash: a2d3f60f46b67c338e2612f4ae813e4be38a0383259dfbd1bb3e6727eac00661
 
 name:           base-main
 version:        0
@@ -55,4 +55,5 @@ executable guiguzi
     , microlens
     , mtl
     , servant-server
+    , servant-swagger
   default-language: Haskell2010

@@ -2,13 +2,11 @@ module Base.Env where
 
 import           Base.Client
 import           Base.Health
-import           Base.Vault
 import           Boots
 import           Lens.Micro
 
 data MainEnv db = MainEnv
-  { app    :: !AppEnv
-  , vaults :: VaultCakeRef (MainEnv db)
+  { app    :: !(AppEnv (MainEnv db))
   , health :: !HealthRef
   -- Client
   , client :: !HttpClient
@@ -22,18 +20,18 @@ class HasMainEnv db env where
   askMainEnv :: Lens' env (MainEnv db)
 instance HasMainEnv db (MainEnv db) where
   askMainEnv = id
-instance HasSalak (MainEnv db) where
-  askSourcePack = askApp . askSourcePack
-instance HasLogger (MainEnv db) where
-  askLogger = askApp . askLogger
 instance HasHealth (MainEnv db) where
   askHealth = lens health (\x y -> x { health = y})
-instance HasApp (MainEnv db) where
+instance HasApp (MainEnv db) (MainEnv db) where
   askApp = lens app (\x y -> x { app = y})
+instance HasLogger (MainEnv db) where
+  askLogger = askApp @(MainEnv db) . askLogger
+instance HasSalak (MainEnv db) where
+  askSourcePack = askApp @(MainEnv db). askSourcePack
+instance HasVault (MainEnv db) (MainEnv db) where
+  askVault = askApp @(MainEnv db). askVault
 instance HasHttpClient (MainEnv db) where
   askHttpClient = lens client (\x y -> x { client = y})
-instance HasVault (MainEnv db) (MainEnv db) where
-  askVault = lens vaults  (\x y -> x { vaults = y})
 
 
 askDb :: Lens' (MainEnv db) db

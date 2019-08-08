@@ -5,9 +5,9 @@ module Base.Web(
   , module Base.Middleware.Trace
 
   , module Base.Health
-  , module Base.Vault
 
   , buildWeb
+  , runVaultInDelayedIO
   , HasSwagger
   ) where
 
@@ -20,14 +20,20 @@ import           Base.Middleware.Error
 import           Base.Middleware.Trace
 import           Base.Web.Types
 
-import           Base.Vault
 import           Boots
 import           Lens.Micro.Extras
+import           Network.Wai
 import           Servant
+import           Servant.Server.Internal
 import           Servant.Swagger
 
 toWeb :: HasVault cxt cxt => Web IO cxt -> Web (App cxt) cxt
 toWeb Web{..} = Web{ nature = \_ _ v -> runVault context v ,..}
+
+runVaultInDelayedIO :: HasVault context context => context -> AppT context DelayedIO a -> DelayedIO a
+runVaultInDelayedIO c ma = do
+  req <- DelayedIO ask
+  runVault c (vault req) ma
 
 buildWeb
   :: forall cxt n api
@@ -35,7 +41,7 @@ buildWeb
     , MonadCatch n
     , HasLogger cxt
     , HasSalak cxt
-    , HasApp cxt
+    , HasApp cxt cxt
     , HasVault cxt cxt
     , HasHttpClient cxt
     , HasHealth cxt
@@ -52,7 +58,7 @@ buildWeb proxy server mid = do
   let proxycxt     = Proxy @cxt
       proxym       = Proxy @(App cxt)
       web0@Web{..} = toWeb (defWeb env str wc)
-      AppEnv{..}   = view askApp env
+      AppEnv{..}   = view askApp env :: AppEnv cxt
   logInfo $ "Start Service [" <> name <> "] ..."
   polish web0
     [ mid
@@ -61,4 +67,4 @@ buildWeb proxy server mid = do
     , serveWebWithSwagger proxym proxycxt True proxy server
     , buildError          proxym proxycxt
     , buildConsul         proxym proxycxt
-    ] >>> runWeb @(App cxt) @cxt
+    ] >>> runWeb @(App cxt) @cxt @cxt

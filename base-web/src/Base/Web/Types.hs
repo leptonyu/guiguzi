@@ -2,7 +2,6 @@ module Base.Web.Types where
 
 import           Base.Health
 import           Base.Metrics
-import           Base.Vault
 import           Boots
 import           Control.Exception
     ( Exception (..)
@@ -68,16 +67,16 @@ instance HasWeb m cxt (Web m cxt) where
 
 askContext :: Lens' (Web n cxt) cxt
 askContext = lens context (\x y -> x { context = y })
+instance HasApp c cxt => HasApp c (Web m cxt) where
+  askApp = askContext . askApp
+instance HasVault c cxt => HasVault c (Web m cxt) where
+  askVault = askContext . askVault
+instance HasHealth cxt => HasHealth (Web m cxt) where
+  askHealth = askContext . askHealth
 instance HasLogger cxt => HasLogger (Web m cxt) where
   askLogger = askContext . askLogger
 instance HasSalak cxt => HasSalak (Web m cxt) where
   askSourcePack = askContext . askSourcePack
-instance HasApp cxt => HasApp (Web m cxt) where
-  askApp = askContext . askApp
-instance HasHealth cxt => HasHealth (Web m cxt) where
-  askHealth = askContext . askHealth
-instance HasVault c cxt => HasVault c (Web m cxt) where
-  askVault = askContext . askVault
 instance HasMetrics (Web m cxt) where
   askMetrics = lens store (\x y -> x { store = y })
 
@@ -99,17 +98,17 @@ instance Monad m => FromProp m SwaggerConfig where
     <*> "enabled" .?= True
 
 runWeb
-  :: forall m cxt n env
+  :: forall m cxt c n env
   . ( MonadCatch n
     , MonadIO n
-    , HasApp cxt
+    , HasApp c cxt
     , HasWeb m cxt env
     , HasLogger env
     , HasSalak env)
   => Factory n env (IO ())
 runWeb = do
   (Web{..} :: Web m cxt) <- asks (view askWeb)
-  let AppEnv{..} = view askApp context
+  let AppEnv{..} = view askApp context :: AppEnv c
   SwaggerConfig{..}      <- require "swagger"
   let portText = fromString (show $ port config)
   when enabled $

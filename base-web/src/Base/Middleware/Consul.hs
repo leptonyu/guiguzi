@@ -14,7 +14,7 @@ import           Network.Consul
 
 buildConsul
   :: forall m cxt env n
-  . ( HasApp env
+  . ( HasApp cxt env
     , HasLogger env
     , HasSalak env
     , HasWeb m cxt env
@@ -26,7 +26,7 @@ buildConsul _ _ = do
   b  <- fromMaybe False <$> require "consul.discovery.enabled"
   tryBuild b $ do
     env <- ask
-    let AppEnv{..}    = view askApp env
+    let AppEnv{..}    = view askApp env :: AppEnv cxt
         Web{..}       = view askWeb env :: Web m cxt
         hc            = view askHttpClient context
         WebConfig{..} = config

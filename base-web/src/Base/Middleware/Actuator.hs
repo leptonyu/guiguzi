@@ -15,7 +15,7 @@ import           Data.Proxy
 buildActuators
   ::( HasSalak env
     , HasLogger env
-    , HasApp env
+    , HasApp cxt env
     , HasMetrics env
     , HasHealth env
     , HasWeb m cxt env

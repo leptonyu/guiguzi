@@ -36,11 +36,10 @@ library:
   - Base.Health
   - Base.Actuator
   - Base.Metrics
-
-  - Base.Vault
   
   other-modules:
   - Base.Web.Types
+  - Base.Web.Context
   
   - Base.Middleware.Actuator
   - Base.Middleware.Trace

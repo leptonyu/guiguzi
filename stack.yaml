@@ -10,7 +10,7 @@ packages:
 - consul
 extra-deps:
 - boots-0.1
-- boots-app-0.1.0.2
+- boots-app-0.1.0.3
 - git: https://github.com/leptonyu/salak.git
   commit: d6a449996650a62e9b66850add8c15083674001d
   subdirs:

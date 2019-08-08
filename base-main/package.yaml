@@ -26,3 +26,4 @@ executables:
     - base-redis
     - base-database
     - servant-server
+    - servant-swagger

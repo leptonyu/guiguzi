@@ -19,9 +19,10 @@ data Info = Info
 type InfoEndpoint = "info" :> Get '[JSON] Info
 
 actuatorInfo
-  ::( HasSalak env
+  :: forall m cxt env n
+  . ( HasSalak env
     , HasLogger env
-    , HasApp env
+    , HasApp cxt env
     , HasWeb m cxt env
     , MonadIO m
     , MonadIO n
@@ -30,7 +31,7 @@ actuatorInfo
 actuatorInfo pm pc ac = asks (view askApp)
   >>= newActuator pm pc ac "info" (Proxy @InfoEndpoint) . return . go
   where
-    go AppEnv{..} = Info{..}
+    go (AppEnv{..} :: AppEnv cxt) = Info{..}
 
 instance ToJSON Info where
   toJSON Info{..} = object [ "application" .= name, "version" .= version ]

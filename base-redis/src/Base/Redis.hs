@@ -8,6 +8,7 @@ import           Data.Maybe
 import           Data.Word
 import           Database.Redis
 import           Lens.Micro
+import           Lens.Micro.Extras
 import           Salak
 
 instance Default ConnectInfo where
@@ -33,6 +34,7 @@ newtype REDIS = REDIS Connection
 data RedisException
   = RedisException !String
   | RedisNotInitializedException
+  | RedisAbortedException
   deriving Show
 
 instance Exception RedisException
@@ -42,6 +44,11 @@ class HasRedis env where
 
 instance HasRedis REDIS where
   askRedis = id
+
+instance (HasRedis env, MonadIO m) => MonadRedis (AppT env m) where
+  liftRedis ra = do
+    REDIS c <- asks (view askRedis)
+    liftIO $ runRedis c ra
 
 check :: REDIS -> IO HealthStatus
 check (REDIS c) = runRedis c ping >>= go

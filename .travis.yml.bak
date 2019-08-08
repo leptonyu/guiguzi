@@ -1,0 +1,17 @@
+language: haskell
+sudo: enabled
+cache:
+  directories:
+  - "$HOME/.stack"
+  - "$TRAVIS_BUILD_DIR/.stack-work"
+cabal: head
+matrix:
+  include:
+  - ghc: 8.6.5
+    env: STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml"
+    env: BIN="$TRAVIS_BUILD_DIR/bin"
+install:
+- curl -sSL https://get.haskellstack.org/ | sh
+- stack --version
+script:
+- stack --local-bin-path $BIN install --system-ghc --test --no-run-tests

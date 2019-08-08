@@ -9,3 +9,4 @@ packages:
   base-main
   opentracing
   consul
+  main

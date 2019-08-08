@@ -7,6 +7,6 @@ RUN cd /data \
  && cabal v2-install main \
  && cp /root/.cabal/bin/guiguzi /data/main
 
-FROM alpine:3.10
-COPY --from=builder /main
+FROM scratch
+COPY --from=builder /data/main /main
 ENTRYPOINT ["/main"] 

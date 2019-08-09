@@ -7,6 +7,9 @@ dependencies:
   - hs-captcha
   - servant-server
   - servant-swagger
+  - base-web
+  - boots-app
+  - wai
 
 library:
   source-dirs: src

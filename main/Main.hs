@@ -33,7 +33,7 @@ instance (HasVault context context, HasLogger context, HasServer api '[context])
   type ServerT (Log :> api) m = ServerT api m
   route _ c@(cxt:. EmptyContext) Delayed{..} = route (Proxy @api) c Delayed{methodD = methodD >> go, ..}
     where
-      go = runVaultInDelayedIO cxt $ logInfo "Hello"
+      go = runVaultInDelayedIO cxt $ const $ logInfo "Hello"
   hoistServerWithContext _ = hoistServerWithContext (Proxy @api)
 
 instance HasSwagger api => HasSwagger (Log :> api) where

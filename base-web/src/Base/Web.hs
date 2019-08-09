@@ -30,10 +30,10 @@ import           Servant.Swagger
 toWeb :: HasVault cxt cxt => Web IO cxt -> Web (App cxt) cxt
 toWeb Web{..} = Web{ nature = \_ _ v -> runVault context v ,..}
 
-runVaultInDelayedIO :: HasVault context context => context -> AppT context DelayedIO a -> DelayedIO a
+runVaultInDelayedIO :: HasVault context context => context -> (Request -> AppT context DelayedIO a) -> DelayedIO a
 runVaultInDelayedIO c ma = do
   req <- DelayedIO ask
-  runVault c (vault req) ma
+  runVault c (vault req) (ma req)
 
 buildWeb
   :: forall cxt n api

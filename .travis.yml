@@ -17,7 +17,7 @@ ghc:
 
 before_install:
   - sudo apt-get update
-  - sudo apt-get install -y gd fontconfig
+  - sudo apt-get install -y libgd-dev fontconfig
 install:
 - curl -sSL https://get.haskellstack.org/ | sh
 - stack --version

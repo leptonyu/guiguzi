@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: d9107282130038f3e562c304f589053366d18bbde2752efcf07c5dfc0a0b206f
+-- hash: 6fe6d120a4315fe49e40dd6e684c10456d7d750c4893d804e6a93b723d0b3478
 
 name:           captcha
 version:        0
@@ -27,7 +27,10 @@ library
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
       base >=4.11 && <5
+    , base-web
+    , boots-app
     , hs-captcha
     , servant-server
     , servant-swagger
+    , wai
   default-language: Haskell2010

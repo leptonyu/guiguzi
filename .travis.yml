@@ -1,12 +1,22 @@
-language: ruby
+language: haskell
+sudo: enabled
 services:
   - docker
-
-before_install:
-  - docker build -t $DOCKER_USERNAME/guiguzi .
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker push $DOCKER_USERNAME/guiguzi
-
+cache:
+  directories:
+  - "$HOME/.stack"
+  - "$TRAVIS_BUILD_DIR/.stack-work"
+cabal: head
+matrix:
+  include:
+  - ghc: 8.6.5
+    env: STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml"
+    env: BIN="$TRAVIS_BUILD_DIR/bin"
+install:
+- curl -sSL https://get.haskellstack.org/ | sh
+- stack --version
 script:
-  - echo hello
-
+- stack --local-bin-path $BIN install --system-ghc --test --no-run-tests --ghc-options=-static
+- docker build -t $DOCKER_USERNAME/guiguzi .
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+- docker push $DOCKER_USERNAME/guiguzi

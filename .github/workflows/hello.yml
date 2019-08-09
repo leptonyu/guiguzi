@@ -1,0 +1,10 @@
+name: Hello
+on:
+  - push
+
+jobs:
+  build:
+    name: World
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo "xxxx"

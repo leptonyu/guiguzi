@@ -19,6 +19,6 @@ install:
 - curl -sSL https://get.haskellstack.org/ | sh
 - stack --version
 script:
-- bash script/deploy
+- bash script/deploy.sh
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 - docker push $DOCKER_USERNAME/guiguzi

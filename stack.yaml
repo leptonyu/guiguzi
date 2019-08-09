@@ -1,4 +1,4 @@
-resolver: nightly-2019-08-06
+resolver: nightly-2019-08-07
 packages:
 - base-web
 - base-client
@@ -9,12 +9,15 @@ packages:
 - opentracing
 - consul
 - main
+- captcha
 extra-deps:
-- boots-0.1
 - boots-app-0.1.0.3
-- salak-0.3.3.1
+- hs-captcha-1.0
 nix:
   packages:
   - zlib
   - lzma
   - postgresql
+  - gd
+  - fontconfig
+  - freetype

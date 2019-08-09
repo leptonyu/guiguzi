@@ -1,0 +1,12 @@
+_common: !include "../common.yaml"
+name:                captcha
+<<: *legal
+
+dependencies:
+  - base >= 4.11 && < 5
+  - hs-captcha
+
+library:
+  source-dirs: src
+  exposed-modules:
+  - Data.Captcha

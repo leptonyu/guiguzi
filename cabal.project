@@ -10,3 +10,5 @@ packages:
   opentracing
   consul
   main
+
+  captcha

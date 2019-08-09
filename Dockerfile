@@ -4,10 +4,8 @@ ADD . /data
 
 RUN cd /data \
  && cabal v2-update \
- && cabal v2-install main --disable-tests \
- && cp /root/.cabal/bin/guiguzi /data/main \
- && chmod +x /data/main
+ && cabal v2-install main --disable-tests
 
 FROM scratch
-COPY --from=builder /data/main /main
+COPY --from=builder /root/.cabal/bin/guiguzi /main
 ENTRYPOINT ["/main"] 

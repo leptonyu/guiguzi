@@ -8,8 +8,10 @@ cache:
   - "$TRAVIS_BUILD_DIR/.stack-work"
 cabal: head
 env:
-  - STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml"
-  - BIN="$TRAVIS_BUILD_DIR/bin"
+  global:
+    - STACK_YAML="$TRAVIS_BUILD_DIR/stack.yaml"
+    - BIN="$TRAVIS_BUILD_DIR/bin"
+
 ghc: 
   - "8.6.5"
 

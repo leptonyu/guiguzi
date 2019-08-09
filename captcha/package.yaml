@@ -5,6 +5,8 @@ name:                captcha
 dependencies:
   - base >= 4.11 && < 5
   - hs-captcha
+  - servant-server
+  - servant-swagger
 
 library:
   source-dirs: src

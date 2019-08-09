@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e4a0a6e5e202e0dd3e9d57fb37e7a0bca192855ce63bae86da7a1cefd6aee1d8
+-- hash: d9107282130038f3e562c304f589053366d18bbde2752efcf07c5dfc0a0b206f
 
 name:           captcha
 version:        0
@@ -28,4 +28,6 @@ library
   build-depends:
       base >=4.11 && <5
     , hs-captcha
+    , servant-server
+    , servant-swagger
   default-language: Haskell2010

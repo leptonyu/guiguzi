@@ -15,6 +15,9 @@ env:
 ghc: 
   - "8.6.5"
 
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -y gd fontconfig
 install:
 - curl -sSL https://get.haskellstack.org/ | sh
 - stack --version

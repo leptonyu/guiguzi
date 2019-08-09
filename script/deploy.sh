@@ -37,6 +37,18 @@ function copy_lib(){
   echo "Done!"
 }
 
-BIN="`pwd`/bin"
+function mk_dockerfile(){
+cat << EOF > $BIN/Dockerfile
+FROM scratch
+COPY . /
+ENTRYPOINT ["/$NAME"]
+EOF
+}
 
-copy_lib $BIN/$NAME $BIN
+NAME=guiguzi
+BIN=.stack-work/bin
+[[ -d "$BIN" ]] && rm -rf "$BIN"
+stack install --local-bin-path=$BIN --ghc-options='-O2 -threaded' $@ \
+  && copy_lib $BIN/$NAME $BIN \
+  && mk_dockerfile \
+  && docker build -t icymint/$NAME:$VERSION $BIN

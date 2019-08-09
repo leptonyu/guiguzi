@@ -17,7 +17,6 @@ install:
 - curl -sSL https://get.haskellstack.org/ | sh
 - stack --version
 script:
-- stack --local-bin-path $BIN install --system-ghc --test --no-run-tests --ghc-options=-static
-- docker build -t $DOCKER_USERNAME/guiguzi .
+- bash script/deploy
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 - docker push $DOCKER_USERNAME/guiguzi

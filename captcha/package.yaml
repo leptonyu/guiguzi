@@ -10,6 +10,15 @@ dependencies:
   - base-web
   - boots-app
   - wai
+  - http-types
+  - swagger2
+  - microlens
+  - text
+  - aeson
+  - base64-bytestring
+  - base-redis
+  - hedis
+  - bytestring
 
 library:
   source-dirs: src

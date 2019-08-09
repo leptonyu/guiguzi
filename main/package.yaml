@@ -18,3 +18,4 @@ executables:
     - microlens
     - servant-server
     - servant-swagger
+    - captcha

@@ -21,3 +21,5 @@ nix:
   - gd
   - fontconfig
   - freetype
+  - libpng
+  - libjpeg

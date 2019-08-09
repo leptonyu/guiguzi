@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6fe6d120a4315fe49e40dd6e684c10456d7d750c4893d804e6a93b723d0b3478
+-- hash: 2bc3edf41bdeedf41968c7fd2cb4bc3747799a0477e654466d8e2ef7ef4017eb
 
 name:           captcha
 version:        0
@@ -26,11 +26,20 @@ library
   default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
-      base >=4.11 && <5
+      aeson
+    , base >=4.11 && <5
+    , base-redis
     , base-web
+    , base64-bytestring
     , boots-app
+    , bytestring
+    , hedis
     , hs-captcha
+    , http-types
+    , microlens
     , servant-server
     , servant-swagger
+    , swagger2
+    , text
     , wai
   default-language: Haskell2010

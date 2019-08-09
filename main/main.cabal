@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7e9df04a4ea6cd85a952f78f18384fbc9b5cf649c44064301387e18a84e8b4f5
+-- hash: 5a95684271b9477f533697c41f70279fc2b90198725ebcd8eb82653e7d7b104d
 
 name:           main
 version:        0
@@ -30,6 +30,7 @@ executable guiguzi
     , base-redis
     , base-web
     , boots-app
+    , captcha
     , microlens
     , servant-server
     , servant-swagger

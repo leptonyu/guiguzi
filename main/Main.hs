@@ -4,13 +4,11 @@ module Main where
 import           Base.Env
 import           Base.Main
 import           Base.Redis
-import           Base.Web
 import           Boots
+import           Data.Captcha
 import           Lens.Micro
 import           Paths_main
 import           Servant
-import           Servant.Server.Internal
-import           Servant.Swagger
 
 data PDB = PDB
   { redis    :: REDIS
@@ -25,21 +23,11 @@ instance HasRedis Env where
 -- instance HasDataSource Env where
 --   askDataSource = askDb . lens database (\x y -> x {database = y})
 
-type DemoAPI = Log :> "hello" :> Get '[PlainText] String
+type DemoAPI =
+  CaptchaEndpoint
+  :<|> CheckCaptcha :> "hello" :> Get '[PlainText] String
 
-data Log
-
-instance (HasVault context context, HasLogger context, HasServer api '[context]) => HasServer (Log :> api) '[context] where
-  type ServerT (Log :> api) m = ServerT api m
-  route _ c@(cxt:. EmptyContext) Delayed{..} = route (Proxy @api) c Delayed{methodD = methodD >> go, ..}
-    where
-      go = runVaultInDelayedIO cxt $ const $ logInfo "Hello"
-  hoistServerWithContext _ = hoistServerWithContext (Proxy @api)
-
-instance HasSwagger api => HasSwagger (Log :> api) where
-  toSwagger _ = toSwagger (Proxy @api)
-
-demoServer = demo
+demoServer = captchaServer :<|> demo
 
 demo :: AppE String
 demo =  do

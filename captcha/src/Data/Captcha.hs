@@ -7,6 +7,8 @@ import           Boots                    hiding (name, version)
 import           Data.Aeson
 import qualified Data.ByteString.Base64   as B64
 import qualified Data.ByteString.Char8    as B
+import qualified Data.ByteString.Lazy     as BL
+import           Data.Captcha.Internal
 import           Data.String
 import           Data.Swagger             hiding (HeaderName)
 import           Data.Swagger.Schema      (ToSchema)
@@ -14,7 +16,6 @@ import           Data.Text                (Text)
 import           Data.Text.Encoding
 import qualified Database.Redis           as R
 import           GHC.Generics
-import           Graphics.Captcha
 import           Lens.Micro
 import           Lens.Micro.Extras
 import           Network.HTTP.Types
@@ -59,9 +60,9 @@ instance ToSchema Captcha
 
 instance ToJSON Captcha
 
-type CaptchaEndpoint = "captcha" :> Post '[JSON] Captcha
+type CaptchaEndpoint = SwaggerTag "captcha" "Captcha Endpoint" :>"captcha" :> Post '[JSON] Captcha
 
-checkCaptcha :: (HasLogger context, HasRedis context) => B.ByteString -> AppT context DelayedIO ()
+checkCaptcha :: (HasLogger context, HasRedis context, MonadIO m, MonadThrow m) => B.ByteString -> AppT context m ()
 checkCaptcha captcha = do
   v <- R.liftRedis $ R.del ["c:" <> captcha]
   case v of
@@ -74,8 +75,8 @@ captchaServer :: forall env. (HasApp env env, HasRedis env) => App env Captcha
 captchaServer = do
   (AppEnv{..} :: AppEnv env) <- asks (view askApp)
   cid           <- rand64 randSeed
-  (code, body1) <- liftIO makeCaptcha
-  let body  = ("image/png;base64 " <>) $ decodeUtf8 $ B64.encode body1
+  (code, body1) <- liftIO $ newCaptcha font
+  let body  = ("image/png;base64 " <>) $ decodeUtf8 $ B64.encode $ BL.toStrict body1
   _ <- R.liftRedis $ R.setex ("c:" <> B.pack cid <> ":" <> B.pack code) 300 "true"
   return Captcha{..}
 

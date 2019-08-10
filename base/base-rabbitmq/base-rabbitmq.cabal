@@ -4,9 +4,9 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: cc714d4f59d415a0466852f868af4d39395b02bee1d7778b860963ef70d6111e
+-- hash: b8af7d58ffc541f5d8245d364eb99cd80a27877db5ae5ba1bde2d63c0f013d4c
 
-name:           main
+name:           base-rabbitmq
 version:        0
 category:       AllInOne
 homepage:       https://github.com/leptonyu/guiguzi#readme
@@ -16,22 +16,21 @@ copyright:      2019 Daniel YU
 license:        MIT
 build-type:     Simple
 
-executable guiguzi
-  main-is: Main.hs
+library
+  exposed-modules:
+      Base.Rabbitmq
   other-modules:
-      Paths_main
+      Paths_base_rabbitmq
   hs-source-dirs:
-      ./.
+      src
   default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
-      base >=4.11 && <5
-    , base-main
-    , base-redis
-    , base-web
+      amqp
+    , base >=4.11 && <5
     , boots-app
-    , captcha
+    , data-default
     , microlens
-    , servant-server
-    , servant-swagger
+    , network
+    , salak
   default-language: Haskell2010

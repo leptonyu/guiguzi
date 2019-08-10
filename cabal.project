@@ -1,14 +1,14 @@
 -- see https://cabal.readthedocs.io/en/latest/nix-local-build-overview.html
 
 packages:
-  base-web
-  base-client
-  base-database
-  base-redis
-  base-rabbitmq
-  base-main
-  opentracing
-  consul
+  base/base-web
+  base/base-client
+  base/base-database
+  base/base-redis
+  base/base-rabbitmq
+  base/base-main
+  third/opentracing
+  third/consul
   main
 
   captcha

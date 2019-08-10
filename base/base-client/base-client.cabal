@@ -4,9 +4,9 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: cc714d4f59d415a0466852f868af4d39395b02bee1d7778b860963ef70d6111e
+-- hash: 5d38883189939bd83946eff82ae86eb7d526db539e25cdd09c0b494da04c4735
 
-name:           main
+name:           base-client
 version:        0
 category:       AllInOne
 homepage:       https://github.com/leptonyu/guiguzi#readme
@@ -16,22 +16,20 @@ copyright:      2019 Daniel YU
 license:        MIT
 build-type:     Simple
 
-executable guiguzi
-  main-is: Main.hs
+library
+  exposed-modules:
+      Base.Client
   other-modules:
-      Paths_main
+      Paths_base_client
   hs-source-dirs:
-      ./.
+      src
   default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
       base >=4.11 && <5
-    , base-main
-    , base-redis
-    , base-web
     , boots-app
-    , captcha
+    , data-default
+    , http-client
     , microlens
-    , servant-server
-    , servant-swagger
+    , salak
   default-language: Haskell2010

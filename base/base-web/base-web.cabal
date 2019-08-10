@@ -1,0 +1,120 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 845751fdf3a3618bfc4b90ea696c18ca455dd6c99c015344273dd4ee646b26c6
+
+name:           base-web
+version:        0
+category:       AllInOne
+homepage:       https://github.com/leptonyu/guiguzi#readme
+author:         Daniel YU
+maintainer:     Daniel YU <leptonyu@gmail.com>
+copyright:      2019 Daniel YU
+license:        MIT
+build-type:     Simple
+
+library
+  exposed-modules:
+      Base.Web
+      Base.Health
+      Base.Actuator
+      Base.Metrics
+  other-modules:
+      Base.Web.Types
+      Base.Web.Swagger
+      Base.Middleware.Actuator
+      Base.Middleware.Trace
+      Base.Middleware.Error
+      Base.Middleware.Consul
+      Base.Actuator.Metrics
+      Base.Actuator.Health
+      Base.Actuator.Refresh
+      Base.Actuator.Info
+      Base.Actuator.Logger
+  hs-source-dirs:
+      src
+  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
+  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
+  build-depends:
+      aeson
+    , base >=4.11 && <5
+    , base-client
+    , boots-app
+    , consul
+    , data-default
+    , ekg-core
+    , exceptions
+    , http-types
+    , microlens
+    , monad-logger
+    , mtl
+    , opentracing
+    , reflection
+    , salak
+    , servant-server
+    , servant-swagger
+    , servant-swagger-ui-jensoleg
+    , swagger2
+    , text
+    , unordered-containers
+    , vault
+    , wai
+    , warp
+  default-language: Haskell2010
+
+test-suite spec
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Base.Actuator
+      Base.Actuator.Health
+      Base.Actuator.Info
+      Base.Actuator.Logger
+      Base.Actuator.Metrics
+      Base.Actuator.Refresh
+      Base.Health
+      Base.Metrics
+      Base.Middleware.Actuator
+      Base.Middleware.Consul
+      Base.Middleware.Error
+      Base.Middleware.Trace
+      Base.Web
+      Base.Web.Swagger
+      Base.Web.Types
+      Paths_base_web
+  hs-source-dirs:
+      test
+      src
+  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
+  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
+  build-depends:
+      QuickCheck <2.14
+    , aeson
+    , base >=4.11 && <5
+    , base-client
+    , boots-app
+    , consul
+    , data-default
+    , ekg-core
+    , exceptions
+    , hspec ==2.*
+    , http-types
+    , microlens
+    , monad-logger
+    , mtl
+    , opentracing
+    , reflection
+    , salak
+    , servant-server
+    , servant-swagger
+    , servant-swagger-ui-jensoleg
+    , swagger2
+    , text
+    , unordered-containers
+    , vault
+    , wai
+    , warp
+  default-language: Haskell2010

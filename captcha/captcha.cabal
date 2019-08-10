@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2bc3edf41bdeedf41968c7fd2cb4bc3747799a0477e654466d8e2ef7ef4017eb
+-- hash: b948c0ce216b130c383793a203b14e6922f2ac108364bd07bf6a039458374b85
 
 name:           captcha
 version:        0
@@ -15,30 +15,37 @@ maintainer:     Daniel YU <leptonyu@gmail.com>
 copyright:      2019 Daniel YU
 license:        MIT
 build-type:     Simple
+extra-source-files:
+    cn.ttf
 
 library
   exposed-modules:
       Data.Captcha
+      Data.Captcha.Internal
   other-modules:
       Paths_captcha
   hs-source-dirs:
       src
-  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification
+  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
-      aeson
+      FontyFruity
+    , JuicyPixels
+    , Rasterific
+    , aeson
     , base >=4.11 && <5
     , base-redis
     , base-web
     , base64-bytestring
     , boots-app
     , bytestring
+    , file-embed-lzma
     , hedis
-    , hs-captcha
     , http-types
     , microlens
     , servant-server
     , servant-swagger
+    , splitmix
     , swagger2
     , text
     , wai

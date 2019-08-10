@@ -1,10 +1,11 @@
 _common: !include "../common.yaml"
 name:                captcha
 <<: *legal
+extra-source-files:
+- cn.ttf
 
 dependencies:
   - base >= 4.11 && < 5
-  - hs-captcha
   - servant-server
   - servant-swagger
   - base-web
@@ -19,8 +20,14 @@ dependencies:
   - base-redis
   - hedis
   - bytestring
+  - JuicyPixels
+  - Rasterific
+  - FontyFruity
+  - splitmix
+  - file-embed-lzma
 
 library:
   source-dirs: src
   exposed-modules:
   - Data.Captcha
+  - Data.Captcha.Internal

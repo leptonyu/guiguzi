@@ -22,7 +22,7 @@ data Health = Health
   , details :: !(HM.HashMap Text Health)
   } deriving (Eq, Show, Generic)
 
-data HealthRef = HealthRef (MVar (IO Health))
+newtype HealthRef = HealthRef (MVar (IO Health))
 
 emptyHealth :: IO HealthRef
 emptyHealth = do

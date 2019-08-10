@@ -1,3 +1,4 @@
+{-# LANGUAGE NoGeneralizedNewtypeDeriving #-}
 module Network.Consul where
 
 import           Base.Client
@@ -24,7 +25,7 @@ data ServiceKind
   | KindMeshGateway
   deriving (Eq, Show, Generic, ToSchema, FromJSON, ToJSON)
 
-data ServiceConnect = ServiceConnect
+newtype ServiceConnect = ServiceConnect
   { enabled :: Bool
   } deriving (Eq, Show, Generic, ToSchema, FromJSON, ToJSON)
 

@@ -11,11 +11,8 @@ executables:
     main:             Main.hs
     dependencies:
     - base-main
-    - base-web
     - base-redis
-    # - base-database
     - boots-app
     - microlens
     - servant-server
-    - servant-swagger
     - captcha

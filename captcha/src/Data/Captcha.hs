@@ -4,6 +4,7 @@ module Data.Captcha where
 import           Base.Redis
 import           Base.Web
 import           Boots                    hiding (name, version)
+import           Control.Monad
 import           Data.Aeson
 import qualified Data.ByteString.Base64   as B64
 import qualified Data.ByteString.Char8    as B
@@ -35,10 +36,9 @@ instance (HasLogger context, HasRedis context, HasVault context context, HasServ
   type ServerT (CheckCaptcha :> api) m = ServerT api m
   route _ c s = route (Proxy @api) c $ s `addMethodCheck` runVaultInDelayedIO @context (getContextEntry c) go
     where
-      go Request{..} = do
-        case lookup hCaptcha requestHeaders of
-          Just captcha -> checkCaptcha captcha
-          _            -> throwM err401 { errBody = "Captcha invalid"}
+      go Request{..} = case lookup hCaptcha requestHeaders of
+        Just captcha -> checkCaptcha captcha
+        _            -> throwM err401 { errBody = "Captcha invalid"}
   hoistServerWithContext _ = hoistServerWithContext (Proxy @api)
 
 instance HasSwagger api => HasSwagger (CheckCaptcha :> api) where
@@ -67,9 +67,7 @@ checkCaptcha captcha = do
   v <- R.liftRedis $ R.del ["c:" <> captcha]
   case v of
     Left  r -> logError (fromString $ show r) >> throwM err401 { errBody = "Captcha invalid" }
-    Right i -> if i == 0
-      then throwM err401 { errBody = "Captcha invalid" }
-      else return ()
+    Right i -> when (i == 0) $ throwM err401 { errBody = "Captcha invalid" }
 
 captchaServer :: forall env. (HasApp env env, HasRedis env) => App env Captcha
 captchaServer = do

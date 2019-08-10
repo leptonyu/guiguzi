@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b8af7d58ffc541f5d8245d364eb99cd80a27877db5ae5ba1bde2d63c0f013d4c
+-- hash: 592aea49c7c8d95e8889f1ae04fb432d29d672bbd190cd4e6aa7b84253a7fbdc
 
 name:           base-rabbitmq
 version:        0
@@ -24,13 +24,11 @@ library
   hs-source-dirs:
       src
   default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
-  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
+  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures -ddump-to-file -ddump-hi
   build-depends:
       amqp
     , base >=4.11 && <5
     , boots-app
-    , data-default
-    , microlens
     , network
     , salak
   default-language: Haskell2010

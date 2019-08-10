@@ -1,3 +1,4 @@
+{-# LANGUAGE NoGeneralizedNewtypeDeriving #-}
 module Base.Actuator.Logger where
 
 import           Base.Actuator
@@ -13,7 +14,7 @@ import           Servant
 
 type LoggerEndpoint = "logger" :> (Get '[JSON] LogInfo :<|> ReqBody '[JSON] LogInfo :> Put '[JSON] NoContent)
 
-data LogInfo = LogInfo
+newtype LogInfo = LogInfo
   { level :: Text
   } deriving (Show, Generic, ToJSON, FromJSON, ToSchema)
 

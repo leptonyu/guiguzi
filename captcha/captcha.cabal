@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b948c0ce216b130c383793a203b14e6922f2ac108364bd07bf6a039458374b85
+-- hash: c979613c9a048b8121a1fe94b43ca63aa0ca3c53f4509f49f2b83e3e9ff93104
 
 name:           captcha
 version:        0
@@ -27,7 +27,7 @@ library
   hs-source-dirs:
       src
   default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
-  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
+  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures -ddump-to-file -ddump-hi
   build-depends:
       FontyFruity
     , JuicyPixels

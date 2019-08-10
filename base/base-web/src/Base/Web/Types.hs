@@ -72,7 +72,7 @@ instance HasMetrics (Web m cxt) where
   askMetrics = lens store (\x y -> x { store = y })
 
 defWeb :: cxt -> Store -> WebConfig -> Web IO cxt
-defWeb cxt s wc = Web cxt wc s id (\_ -> id) serveWithContext toSwagger
+defWeb cxt s wc = Web cxt wc s id (const id) serveWithContext toSwagger
 
 runWeb
   ::( HasWeb m cxt env
@@ -87,7 +87,7 @@ runWeb = do
   let AppEnv{..} = view askApp context
       portText = fromString (show $ port config)
   SwaggerConfig{..}      <- require "swagger"
-  when enabled $ do
+  when enabled $
     logInfo  $ "Swagger enabled: http://"<> fromString (hostname config) <> ":" <> portText <> "/" <> fromString urlDir
   logInfo $ "Service started on port(s): " <> portText
   delayA $ logInfo "Service ended"

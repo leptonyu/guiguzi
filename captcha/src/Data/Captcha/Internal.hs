@@ -26,7 +26,7 @@ newCaptcha f = do
         let (i, g2) = nextInt g1
             (d1,r1) = divMod i  26
             r2      = d1 `mod` length colors
-            a       = chr $ (ord 'A') + r1
+            a       = chr $ ord 'A' + r1
         in (g2, (a, TextRange f (PointSize 50) [a]
                 (Just $ uniformTexture $ colors !! r2)) :xs)
   return (

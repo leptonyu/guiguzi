@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 47f0be6e29ae3dc92f92db0b2863813e0f75a1ff86a780f3e191d745d7bc23f8
+-- hash: 14bc58060ece6a4d976b3ff08c19ec5555a36191a4d31ab8fdd214bdc04dfeb0
 
 name:           opentracing
 version:        0
@@ -25,7 +25,7 @@ library
   hs-source-dirs:
       src
   default-extensions: GeneralizedNewtypeDeriving RecordWildCards ScopedTypeVariables
-  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
+  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures -ddump-to-file -ddump-hi
   build-depends:
       base >=4.10 && <5
     , bytestring

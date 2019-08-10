@@ -6,8 +6,6 @@ dependencies:
   - base >= 4.11 && < 5
   - boots-app
   - salak
-  - microlens
-  - data-default
   - network
   - amqp
 

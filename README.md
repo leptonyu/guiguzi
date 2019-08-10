@@ -9,7 +9,7 @@
 - Web
   - [Servant](https://hackage.haskell.org/package/servant-server) Based
   - [Swagger](https://hackage.haskell.org/package/servant-swagger)
-  - [OpenTracing](https://github.com/leptonyu/guiguzi/tree/master/opentracing)
+  - [OpenTracing](https://github.com/leptonyu/guiguzi/tree/master/third/opentracing)
   - Actuators
     - Health Check, allow extensions.
     - Refresh Configuration, by [salak](https://hackage.haskell.org/package/salak).

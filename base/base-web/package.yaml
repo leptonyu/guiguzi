@@ -12,7 +12,7 @@ dependencies:
   - microlens
   - text
   - servant-swagger
-  - servant-swagger-ui-jensoleg
+  - servant-swagger-ui
   - mtl
   - reflection
   - swagger2

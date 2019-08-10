@@ -24,7 +24,7 @@ import           Salak
 import           Servant
 import           Servant.Server.Internal.ServerError (responseServerError)
 import           Servant.Swagger
-import           Servant.Swagger.UI.JensOleG
+import           Servant.Swagger.UI
 
 -- | Application Configuration.
 data WebConfig = WebConfig
@@ -97,7 +97,7 @@ runWeb = do
     $ if enabled
       then reifySymbol urlDir
             $ \pd -> reifySymbol urlSchema
-            $ \ps -> serveW (gos pd ps) (context :. EmptyContext) (jensolegSwaggerSchemaUIServer
+            $ \ps -> serveW (gos pd ps) (context :. EmptyContext) (swaggerSchemaUIServer
               $ baseInfo (hostname config) name version (fromIntegral $ port config)
               $ swagge (Proxy @EmptyAPI))
       else serveW (Proxy @EmptyAPI) (context :. EmptyContext) emptyServer

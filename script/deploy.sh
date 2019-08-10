@@ -53,3 +53,4 @@ stack install --local-bin-path=$BIN --ghc-options='-O2 -threaded' $@ \
   && copy_lib $BIN/$NAME $BIN \
   && mk_dockerfile \
   && docker build -t icymint/$NAME:$VERSION $BIN
+  && rm -rf "$BIN"

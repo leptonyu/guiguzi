@@ -11,9 +11,6 @@ packages:
 - main
 - captcha
 extra-deps:
-# - boots-app-0.1.0.3
-- hs-captcha-1.0
-- servant-swagger-ui-jensoleg-0.3.3
 - git: https://github.com/leptonyu/boots.git
   commit: 1bfe82f31783fbd47f50a6987227ddfa433dd999
   subdirs:

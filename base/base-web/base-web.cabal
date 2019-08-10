@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 845751fdf3a3618bfc4b90ea696c18ca455dd6c99c015344273dd4ee646b26c6
+-- hash: bb8e189d462fce5406d26659d9787d11edd782c6afb58752f4c1f44089371257
 
 name:           base-web
 version:        0
@@ -56,7 +56,7 @@ library
     , salak
     , servant-server
     , servant-swagger
-    , servant-swagger-ui-jensoleg
+    , servant-swagger-ui
     , swagger2
     , text
     , unordered-containers
@@ -110,7 +110,7 @@ test-suite spec
     , salak
     , servant-server
     , servant-swagger
-    , servant-swagger-ui-jensoleg
+    , servant-swagger-ui
     , swagger2
     , text
     , unordered-containers

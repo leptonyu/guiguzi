@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 159af2f429e4d7222cb28f915dbd431d06f7e35f87209b03499322fb4e246deb
+-- hash: 3650b8ea8c7a281614e642f3a5c17c8a1970dba094c9abb2bd15e378a56a529e
 
 name:           main
 version:        0
@@ -23,7 +23,7 @@ executable guiguzi
   hs-source-dirs:
       ./.
   default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
-  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures -ddump-to-file -ddump-hi
+  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
       base >=4.11 && <5
     , base-main

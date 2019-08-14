@@ -9,10 +9,10 @@ import           Salak
 instance Default ManagerSettings where
   def = defaultManagerSettings
 
-instance Monad m => FromProp m ResponseTimeout where
+instance FromProp m ResponseTimeout where
   fromProp = responseTimeoutMicro <$> fromProp
 
-instance Monad m => FromProp m ManagerSettings where
+instance FromProp m ManagerSettings where
   fromProp = do
     connCount <- "max-conns"  .?: managerConnCount
     timeout   <- "timeout"    .?: managerResponseTimeout

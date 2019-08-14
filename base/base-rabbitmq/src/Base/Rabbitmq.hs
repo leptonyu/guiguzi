@@ -8,7 +8,7 @@ import           Salak
 instance Monad m => FromProp m PortNumber where
   fromProp = fromInteger <$> fromProp
 
-instance Monad m => FromProp m ConnectionOpts where
+instance FromProp m ConnectionOpts where
   fromProp = ConnectionOpts
     <$> fmap (:[]) go
     <*> "vhost" .?= "/"

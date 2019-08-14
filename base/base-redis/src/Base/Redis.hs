@@ -14,7 +14,7 @@ import           Salak
 instance Default ConnectInfo where
   def = defaultConnectInfo
 
-instance Monad m => FromProp m ConnectInfo where
+instance FromProp m ConnectInfo where
   fromProp = ConnInfo
     <$> "host"      .?: connectHost
     <*> "port"      .?: connectPort
@@ -25,7 +25,7 @@ instance Monad m => FromProp m ConnectInfo where
     <*> return Nothing
     <*> return Nothing
 
-instance Monad m => FromProp m PortID where
+instance FromProp m PortID where
   fromProp = PortNumber . fromIntegral <$> (fromProp :: Prop m Word16)
 
 -- | Middleware context type.

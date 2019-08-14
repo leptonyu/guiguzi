@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 72c463c67ed1ec2a856cd25ad508314b832f366cee046f30c00c0924c670d75f
+-- hash: 4b592c7f3353d6b3ef7920c07a7f54824053b3a34678709bd7c898d411debd0f
 
 name:           consul
 version:        0
@@ -24,7 +24,7 @@ library
   hs-source-dirs:
       src
   default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
-  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures -ddump-to-file -ddump-hi
+  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
       aeson
     , base >=4.11 && <5

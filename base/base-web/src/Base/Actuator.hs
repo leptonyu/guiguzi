@@ -13,7 +13,7 @@ import           Servant.Swagger
 
 newtype ActuatorConfig = ActuatorConfig { enabled :: Bool }
 
-instance Monad m => FromProp m ActuatorConfig where
+instance FromProp m ActuatorConfig where
   fromProp = ActuatorConfig
     <$> "enabled" .?= True
 

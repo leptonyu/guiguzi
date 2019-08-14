@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 10f7e3dcf01e4725173a75ca56ed72ea1404d83f2abbd1fa63bc102b7b6832eb
+-- hash: 5d38883189939bd83946eff82ae86eb7d526db539e25cdd09c0b494da04c4735
 
 name:           base-client
 version:        0
@@ -24,7 +24,7 @@ library
   hs-source-dirs:
       src
   default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
-  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures -ddump-to-file -ddump-hi
+  ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
       base >=4.11 && <5
     , boots-app

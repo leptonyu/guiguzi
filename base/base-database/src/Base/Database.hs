@@ -25,7 +25,7 @@ instance Exception DatabaseException
 
 data DBType = PostgreSQL | SQLite deriving Show
 
-instance Monad m => FromProp m DBType where
+instance FromProp m DBType where
   fromProp = readEnum (go . T.toLower)
     where
       go "postgresql" = Right PostgreSQL
@@ -88,7 +88,7 @@ data PGConfig = PGConfig
   , maxConns :: !Word16
   }
 
-instance Monad m => FromProp m PGConfig where
+instance FromProp m PGConfig where
   fromProp = PGConfig
     <$> "host"      .?= "localhost"
     <*> "port"      .?= 5432
@@ -120,7 +120,7 @@ data SQLiteConfig = SQLiteConfig
   , maxConns :: !Word16
   }
 
-instance Monad m => FromProp m SQLiteConfig where
+instance FromProp m SQLiteConfig where
   fromProp = SQLiteConfig
     <$> "conn"      .?= ":memory:"
     <*> "max-conns" .?= 1

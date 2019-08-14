@@ -27,7 +27,7 @@ instance HasApp (MainEnv db) (MainEnv db) where
 instance HasLogger (MainEnv db) where
   askLogger = askApp @(MainEnv db) . askLogger
 instance HasSalak (MainEnv db) where
-  askSourcePack = askApp @(MainEnv db). askSourcePack
+  askSalak = askApp @(MainEnv db). askSalak
 instance HasVault (MainEnv db) (MainEnv db) where
   askVault = askApp @(MainEnv db). askVault
 instance HasHttpClient (MainEnv db) where

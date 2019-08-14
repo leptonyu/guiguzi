@@ -35,7 +35,7 @@ data WebConfig = WebConfig
 instance Default WebConfig where
   def = WebConfig "localhost" 8888
 
-instance Monad m => FromProp m WebConfig where
+instance FromProp m WebConfig where
   fromProp = WebConfig
     <$> "host" .?: hostname
     <*> "port" .?: port
@@ -67,7 +67,7 @@ instance HasHealth cxt => HasHealth (Web m cxt) where
 instance HasLogger cxt => HasLogger (Web m cxt) where
   askLogger = askContext . askLogger
 instance HasSalak cxt => HasSalak (Web m cxt) where
-  askSourcePack = askContext . askSourcePack
+  askSalak = askContext . askSalak
 instance HasMetrics (Web m cxt) where
   askMetrics = lens store (\x y -> x { store = y })
 

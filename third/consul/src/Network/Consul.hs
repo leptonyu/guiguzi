@@ -187,14 +187,14 @@ data ConsulConfig = ConsulConfig
   , url      :: BaseUrl
   }
 
-instance Monad m => FromProp m BaseUrl where
+instance FromProp m BaseUrl where
   fromProp = BaseUrl
     <$> "schema" .?= Http
     <*> "host"   .?= "127.0.0.1"
     <*> "port"   .?= 8500
     <*> "path"   .?= ""
 
-instance Monad m => FromProp m ConsulConfig where
+instance FromProp m ConsulConfig where
   fromProp = ConsulConfig
     <$> "meta"
     <*> "tags"
@@ -203,7 +203,7 @@ instance Monad m => FromProp m ConsulConfig where
     <*> "deregister-critical-service-after" .?= "30m"
     <*> fromProp
 
-instance Monad m => FromProp m Scheme where
+instance FromProp m Scheme where
   fromProp = readEnum (go.toLower)
     where
       go "http"  = Right Http

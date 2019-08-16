@@ -15,6 +15,10 @@ import           Data.Proxy
 import           Data.Reflection
 import           Data.String
 import           Data.Swagger                        (Swagger)
+import           Data.Text                           (Text)
+import           Data.Text.Lazy                      (toStrict)
+import           Data.Text.Lazy.Encoding
+import qualified Data.Vault.Lazy                     as L
 import           Data.Word
 import           Lens.Micro
 import           Lens.Micro.Extras
@@ -79,6 +83,8 @@ runWeb
     , MonadCatch n
     , MonadIO n
     , HasApp cxt cxt
+    , HasVault cxt cxt
+    , HasLogger cxt
     , HasLogger env
     , HasSalak env)
   => Factory n env (IO ())
@@ -86,6 +92,11 @@ runWeb = do
   Web{..}<- asks (view askWeb)
   let AppEnv{..} = view askApp context
       portText = fromString (show $ port config)
+      serveWarp WebConfig{..} = runSettings
+        $ defaultSettings
+        & setPort (fromIntegral port)
+        & setOnExceptionResponse whenException
+        & setOnException (logException context . maybe L.empty vault)
   SwaggerConfig{..}      <- require "swagger"
   when enabled $
     logInfo  $ "Swagger enabled: http://"<> fromString (hostname config) <> ":" <> portText <> "/" <> fromString urlDir
@@ -104,13 +115,19 @@ runWeb = do
   where
     gos :: forall a b. Proxy a -> Proxy b -> Proxy (SwaggerSchemaUI a b)
     gos _ _ = Proxy
-    whenException :: SomeException -> Network.Wai.Response
-    whenException e = responseServerError
-      $ fromMaybe err400 { errBody = fromString $ show e} (fromException e :: Maybe ServerError)
-    serveWarp WebConfig{..} = runSettings
-      $ defaultSettings
-      & setPort (fromIntegral port)
-      & setOnExceptionResponse whenException
+
+
+logException :: (HasVault cxt cxt, HasLogger cxt) => cxt -> Vault -> SomeException -> IO ()
+logException context v = runVault context v . logError . formatException
+
+whenException :: SomeException -> Network.Wai.Response
+whenException e = responseServerError
+  $ fromMaybe err400 { errBody = fromString $ show e} (fromException e :: Maybe ServerError)
+
+formatException :: SomeException -> Text
+formatException e = case fromException e of
+  Just ServerError{..} -> fromString errReasonPhrase <> " " <> (toStrict $ decodeUtf8 errBody)
+  _                    -> fromString $ show e
 
 
 serveWebWithSwagger

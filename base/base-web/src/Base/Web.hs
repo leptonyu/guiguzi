@@ -29,8 +29,8 @@ import           Servant
 import           Servant.Server.Internal
 import           Servant.Swagger
 
-toWeb :: HasVault cxt cxt => Web IO cxt -> Web (App cxt) cxt
-toWeb Web{..} = Web{ nature = runVault context ,..}
+toWeb :: (HasLogger cxt, HasVault cxt cxt) => Web IO cxt -> Web (App cxt) cxt
+toWeb Web{..} = Web{ nature = runVault context, ..}
 
 runVaultInDelayedIO :: HasVault context context => context -> (Request -> AppT context DelayedIO a) -> DelayedIO a
 runVaultInDelayedIO c ma = do
@@ -60,10 +60,10 @@ buildWeb proxy server mid = do
       AppEnv{..}   = view askApp env
   logInfo $ "Start Service [" <> name <> "] ..."
   polish web0
-    [ mid
-    , buildTrace
+    [ buildError
+    , mid
     , buildActuators
     , serveWebWithSwagger True proxy server
-    , buildError
     , buildConsul
+    , buildTrace
     ] >>> runWeb

@@ -26,6 +26,7 @@ cabal.sandbox.config
 .cabal
 cabal.project.local
 .HTF/
+.ghc*
 
 .DS_Store
 sql

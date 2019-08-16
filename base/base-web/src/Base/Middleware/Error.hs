@@ -2,15 +2,17 @@ module Base.Middleware.Error where
 
 import           Base.Web.Types
 import           Boots
-import           Control.Exception (SomeException, catch, throw)
-import           Data.Text         (pack)
+import           Control.Exception (catch)
+import           Lens.Micro.Extras
+import           Network.Wai       (vault)
 
 buildError
-  :: (HasWeb m cxt env, MonadIO n, HasLogger env)
+  :: (HasWeb m cxt env, HasVault cxt cxt, MonadIO n, HasLogger cxt)
   => Factory n env env
 buildError = do
-  lf <- askLoggerIO
+  Web{..} <- asks (view askWeb)
   buildMiddleware
-    $ \app req resH -> app req
-      $ \res -> resH res `catch`
-          \e -> runLoggingT (logError $ pack $ show (e :: SomeException)) lf >> throw e
+    $ \app req resH -> app req resH `catch`
+      \e -> do
+        logException context (vault req) e
+        resH (whenException e)

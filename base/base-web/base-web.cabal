@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: bb8e189d462fce5406d26659d9787d11edd782c6afb58752f4c1f44089371257
+-- hash: c04be7e32f9a8caf28360d153631f1e988c730590aa3ca84180e43ef56eca3f9
 
 name:           base-web
 version:        0
@@ -36,7 +36,7 @@ library
       Base.Actuator.Logger
   hs-source-dirs:
       src
-  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
+  default-extensions: RankNTypes TypeOperators FlexibleInstances OverloadedStrings MultiParamTypeClasses TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
       aeson
@@ -88,7 +88,7 @@ test-suite spec
   hs-source-dirs:
       test
       src
-  default-extensions: RankNTypes TypeOperators FlexibleInstances MultiParamTypeClasses OverloadedStrings TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures TypeFamilies PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
+  default-extensions: RankNTypes TypeOperators FlexibleInstances OverloadedStrings MultiParamTypeClasses TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
       QuickCheck <2.14

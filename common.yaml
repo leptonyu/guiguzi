@@ -11,8 +11,8 @@
     - RankNTypes
     - TypeOperators
     - FlexibleInstances
-    - MultiParamTypeClasses
     - OverloadedStrings
+    - MultiParamTypeClasses
     - TypeApplications
     - RecordWildCards
     - ScopedTypeVariables
@@ -23,7 +23,6 @@
     - DeriveGeneric
     - DeriveAnyClass
     - KindSignatures
-    - TypeFamilies
     - PartialTypeSignatures
     - TupleSections
     - ExistentialQuantification

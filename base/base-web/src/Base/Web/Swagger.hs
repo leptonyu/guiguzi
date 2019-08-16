@@ -1,3 +1,4 @@
+{-# LANGUAGE TypeFamilies #-}
 module Base.Web.Swagger where
 
 import qualified Data.Swagger    as S

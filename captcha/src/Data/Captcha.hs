@@ -1,3 +1,4 @@
+{-# LANGUAGE TypeFamilies         #-}
 {-# LANGUAGE UndecidableInstances #-}
 module Data.Captcha where
 

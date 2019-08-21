@@ -11,9 +11,10 @@ packages:
 - main
 - captcha
 extra-deps:
-- boots-app-0.1.0.5
-- salak-0.3.3.2
-- salak-yaml-0.3.3.2
+- boots-0.1
+- boots-app-0.1.0.7
+- salak-0.3.5
+- salak-yaml-0.3.5
 nix:
   packages:
   - zlib

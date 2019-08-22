@@ -7,7 +7,6 @@ import           Control.Concurrent
 import           Data.Aeson
 import           Data.Swagger.Schema (ToSchema)
 import           Data.Text           (Text)
-import           Data.Version        (Version)
 import           Data.Version
 import           GHC.Generics
 import           GHC.RTS.Flags

@@ -152,7 +152,7 @@ whenException e = responseServerError
 {-# INLINE formatException #-}
 formatException :: SomeException -> Text
 formatException e = case fromException e of
-  Just ServerError{..} -> fromString errReasonPhrase <> " " <> (toStrict $ decodeUtf8 errBody)
+  Just ServerError{..} -> fromString errReasonPhrase <> " " <> toStrict (decodeUtf8 errBody)
   _                    -> fromString $ show e
 
 

@@ -27,7 +27,8 @@ buildTrace = do
   AppEnv{..} <- asks (view askApp)
   logFunc    <- asks (view askLogger)
   spc <- liftIO $ newSpanContext $ rand64 randSeed
-  env <- buildMiddleware $ \app req resH -> do
+  logInfo "Load plugin trace."
+  buildMiddleware $ \app req resH -> do
     nspc <- case Prelude.lookup hTraceId (requestHeaders req) of
       Just htid -> case Prelude.lookup hSpanId (requestHeaders req) of
         Just hsid -> return $ Trace spc { traceId = htid } (SpanId hsid)
@@ -42,8 +43,6 @@ buildTrace = do
         app req1 $ \res -> do
           toLog logFunc req1 (responseStatus res) Nothing
           resH $ mapResponseHeaders (\hs -> (hTraceId, traceId context):(hSpanId, r spans):hs) res
-  logInfo "Load plugin trace."
-  return env
   where
     {-# INLINE f #-}
     f NoSpan      _   = Nothing

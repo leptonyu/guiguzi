@@ -57,7 +57,7 @@ check (REDIS c) = runRedis c ping >>= go
     go _        = return UP
 
 buildRedis
-  :: (MonadCatch m, MonadIO m, HasSalak env, HasLogger env, HasHealth env)
+  :: (MonadMask m, MonadIO m, HasSalak env, HasLogger env, HasHealth env)
   => Factory m env REDIS
 buildRedis = do
   enabled <- fromMaybe True <$> require "redis.enabled"

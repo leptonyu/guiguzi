@@ -1,10 +1,10 @@
 {-# LANGUAGE UndecidableInstances #-}
 module Main where
 
+import           Base.Database
 import           Base.Env
 import           Base.Main
 import           Base.Redis
-import           Base.Database
 import           Boots
 import           Data.Captcha
 import           Lens.Micro

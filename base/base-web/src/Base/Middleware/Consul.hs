@@ -18,7 +18,7 @@ buildConsul
     , HasWeb m cxt env
     , HasHttpClient cxt
     , MonadIO n
-    , MonadCatch n)
+    , MonadMask n)
   => Factory n env env
 buildConsul = do
   b  <- fromMaybe False <$> require "consul.discovery.enabled"

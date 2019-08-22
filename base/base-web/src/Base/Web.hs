@@ -39,7 +39,7 @@ runVaultInDelayedIO c ma = do
 
 buildWeb
   ::( MonadIO n
-    , MonadCatch n
+    , MonadMask n
     , HasLogger cxt
     , HasSalak cxt
     , HasApp cxt cxt

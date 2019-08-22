@@ -83,7 +83,7 @@ defWeb cxt s wc = Web cxt wc s id (const id) serveWithContext toSwagger
 
 runWeb
   ::( HasWeb m cxt env
-    , MonadCatch n
+    , MonadMask n
     , MonadIO n
     , HasApp cxt cxt
     , HasVault cxt cxt

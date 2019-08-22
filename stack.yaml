@@ -11,8 +11,11 @@ packages:
 - main
 - captcha
 extra-deps:
-- boots-0.1.1
-- boots-app-0.1.1
+- git: https://github.com/leptonyu/boots.git
+  commit: 47d7b5bf1b1c34145fc46063a369e8edcdbd951f
+  subdirs:
+  - boots
+  - boots-app
 - salak-0.3.5.1
 - salak-yaml-0.3.5.1
 - warp-3.3.0

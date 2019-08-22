@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: c04be7e32f9a8caf28360d153631f1e988c730590aa3ca84180e43ef56eca3f9
+-- hash: 4452551c45d0e9c14fb0b1e3b613fc397962862d5d0bf0a4b73552f979b37652
 
 name:           base-web
 version:        0
@@ -44,6 +44,7 @@ library
     , base-client
     , boots-app
     , consul
+    , containers
     , data-default
     , ekg-core
     , exceptions
@@ -97,6 +98,7 @@ test-suite spec
     , base-client
     , boots-app
     , consul
+    , containers
     , data-default
     , ekg-core
     , exceptions

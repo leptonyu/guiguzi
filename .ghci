@@ -1,0 +1,5 @@
+import System.Environment
+setEnv "logging.level" "info"
+setEnv "consul.discovery.enabled" "false"
+setEnv "redis.enabled" "false"
+:load Main

@@ -60,9 +60,9 @@ buildWeb proxy server mid = do
       AppEnv{..}   = view askApp env
   logInfo $ "Start Service [" <> name <> "] ..."
   polish web0
-    [ buildError
-    , mid
+    [ mid
     , buildActuators
+    , buildError
     , serveWebWithSwagger True proxy server
     , buildConsul
     , buildTrace

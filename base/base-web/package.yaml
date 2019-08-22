@@ -4,29 +4,30 @@ name:                base-web
 
 dependencies:
   - base >= 4.11 && < 5
+  - aeson
+  - base-client
   - boots-app
-  - wai
-  - salak
+  - consul
+  - containers
   - data-default
-  - servant-server
+  - ekg-core
+  - exceptions
+  - http-types
   - microlens
-  - text
+  - monad-logger
+  - mtl
+  - opentracing
+  - reflection
+  - salak
+  - servant-server
   - servant-swagger
   - servant-swagger-ui
-  - mtl
-  - reflection
   - swagger2
+  - text
   - unordered-containers
-  - aeson
   - vault
-  - opentracing
-  - http-types
+  - wai
   - warp
-  - exceptions
-  - base-client
-  - consul
-  - ekg-core
-  - monad-logger
 
 
 library:

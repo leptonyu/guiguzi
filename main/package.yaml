@@ -9,7 +9,7 @@ executables:
   guiguzi:
     source-dirs:      .
     ghc-options: -rtsopts -threaded -with-rtsopts=-K1K
-    main:             Main.hs
+    main: Main.hs
     dependencies:
     - base-main
     - base-redis

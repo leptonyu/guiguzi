@@ -26,8 +26,9 @@ instance HasRedis Env where
 type DemoAPI =
   CaptchaEndpoint
   :<|> CheckCaptcha :> "hello" :> Get '[PlainText] String
+  :<|>                "hellox" :> Get '[PlainText] String
 
-demoServer = captchaServer :<|> demo
+demoServer = captchaServer :<|> demo :<|> return "Hello"
 
 demo :: AppE String
 demo =  do

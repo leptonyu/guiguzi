@@ -16,12 +16,14 @@ import           Data.Reflection
 import           Data.String
 import           Data.Swagger                        (Swagger)
 import           Data.Text                           (Text)
+import qualified Data.Text.Encoding                  as TE
 import           Data.Text.Lazy                      (toStrict)
 import           Data.Text.Lazy.Encoding
 import qualified Data.Vault.Lazy                     as L
 import           Data.Word
 import           Lens.Micro
 import           Lens.Micro.Extras
+import           Network.HTTP.Types
 import           Network.Wai
 import           Network.Wai.Handler.Warp
 import           Salak
@@ -75,6 +77,7 @@ instance HasSalak cxt => HasSalak (Web m cxt) where
 instance HasMetrics (Web m cxt) where
   askMetrics = lens store (\x y -> x { store = y })
 
+{-# INLINE defWeb #-}
 defWeb :: cxt -> Store -> WebConfig -> Web IO cxt
 defWeb cxt s wc = Web cxt wc s id (const id) serveWithContext toSwagger
 
@@ -95,6 +98,7 @@ runWeb = do
       serveWarp WebConfig{..} = runSettings
         $ defaultSettings
         & setPort (fromIntegral port)
+        & setHost (fromString hostname)
         & setOnExceptionResponse whenException
         & setOnException (logException context . maybe L.empty vault)
   SwaggerConfig{..}      <- require "swagger"
@@ -113,17 +117,39 @@ runWeb = do
               $ swagge (Proxy @EmptyAPI))
       else serveW (Proxy @EmptyAPI) (context :. EmptyContext) emptyServer
   where
+    {-# INLINE gos #-}
     gos :: forall a b. Proxy a -> Proxy b -> Proxy (SwaggerSchemaUI a b)
     gos _ _ = Proxy
 
+{-# INLINE toLog #-}
+toLog :: LogFunc -> Request -> Status -> Maybe Integer -> IO ()
+toLog lf req Status{..} mint =
+  let LogFunc{..} = traceVault (vault req) lf
+      v (Just i) = ' ' : show i
+      v _        = ""
+      g (Just i) = " \"" <> i <> "\""
+      g _        = " \"\""
+  in (`runLoggingT` logfunc)
+  $ (if statusCode < 400 then logInfo else logWarn)
+  $ TE.decodeUtf8 ("\"" <> requestMethod req <> " " <> rawPathInfo req <> rawQueryString req <> " ")
+  <> fromString (show (httpVersion req) <> "\"")
+  <> TE.decodeUtf8 (g (requestHeaderReferer req) <> g (requestHeaderHost req) <> g (requestHeaderUserAgent req))
+  <> fromString (concat
+    [ " "
+    , show statusCode
+    , v mint
+    ])
 
+{-# INLINE logException #-}
 logException :: (HasVault cxt cxt, HasLogger cxt) => cxt -> Vault -> SomeException -> IO ()
 logException context v = runVault context v . logError . formatException
 
+{-# INLINE whenException #-}
 whenException :: SomeException -> Network.Wai.Response
 whenException e = responseServerError
   $ fromMaybe err400 { errBody = fromString $ show e} (fromException e :: Maybe ServerError)
 
+{-# INLINE formatException #-}
 formatException :: SomeException -> Text
 formatException e = case fromException e of
   Just ServerError{..} -> fromString errReasonPhrase <> " " <> (toStrict $ decodeUtf8 errBody)
@@ -170,9 +196,11 @@ serveWeb b proxy server = tryBuild b
     go :: IO a -> Servant.Handler a
     go = liftIO
 
+{-# INLINE gop #-}
 gop :: forall a b. Proxy a -> Proxy b -> Proxy (a :<|> (Vault :> b))
 gop _ _ = Proxy
 
+{-# INLINE tryBuild #-}
 tryBuild :: Bool -> Factory n env env -> Factory n env env
 tryBuild b p = if b then p else ask
 

@@ -6,6 +6,7 @@ import           Base.Web.Types
 import           Boots
 import           Control.Exception      (SomeException, catch, throw)
 import qualified Data.HashMap.Strict    as HM
+import qualified Data.Map.Strict        as M
 import           Data.Proxy
 import           Data.Text              (Text, pack)
 import           Lens.Micro.Extras
@@ -15,7 +16,7 @@ import qualified System.Metrics.Counter as Counter
 
 type MetricsEndpoint = "metrics" :> Get '[JSON] Metrics
 
-type Metrics = HM.HashMap Text Text
+type Metrics = M.Map Text Text
 
 actuatorMetrics
   ::( HasSalak env
@@ -40,11 +41,17 @@ actuatorMetrics ac = do
     , newActuator ac "metrics" (Proxy @MetricsEndpoint) (liftIO $ go store)
     ]
   where
+    {-# INLINE go #-}
     go s = do
       sample <- sampleAll s
-      return (HM.map g2 sample)
+      return
+        $ M.fromList
+        $ HM.toList
+        $ HM.map g2 sample
+    {-# INLINE showT #-}
     showT :: Show a => a -> Text
     showT = pack . show
+    {-# INLINE g2 #-}
     g2 (Counter i)      = showT i
     g2 (Gauge i)        = showT i
     g2 (Label x)        = x

@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 0d15d1cb1e04f3cf7ea943c2ca8dfe3b24dc24ff441b4540630e6f7558fccfd3
+-- hash: 2be58a3084678377b693402b118d1d35e74a103967a40e5245338a83687b5ee9
 
 name:           main
 version:        0
@@ -26,6 +26,7 @@ executable guiguzi
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures -rtsopts -threaded -with-rtsopts=-K1K
   build-depends:
       base >=4.11 && <5
+    , base-database
     , base-main
     , base-redis
     , boots-app

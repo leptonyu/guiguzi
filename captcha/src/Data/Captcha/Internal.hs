@@ -22,6 +22,7 @@ newCaptcha f = do
         [ PixelRGBA8 0 0x86 0xc1 255
         ]
       (_,ps) = foldr go (gen, []) ([1..4] :: [Int])
+      {-# INLINE go #-}
       go _ (g1,xs) =
         let (i, g2) = nextInt g1
             (d1,r1) = divMod i  26

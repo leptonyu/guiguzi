@@ -50,8 +50,11 @@ instance (HasSwagger api, KnownSymbol name, KnownSymbol desp)
   => HasSwagger (SwaggerTag name desp :> api) where
   toSwagger _ = toSwagger (Proxy @api) & S.applyTags [tag]
     where
+      {-# INLINE tag #-}
       tag = S.Tag (go (Proxy @name)) (g2 $ go (Proxy @desp)) Nothing
+      {-# INLINE go #-}
       go :: forall a. KnownSymbol a => Proxy a -> Text
       go  = pack . symbolVal
+      {-# INLINE g2 #-}
       g2 "" = Nothing
       g2 a  = Just a

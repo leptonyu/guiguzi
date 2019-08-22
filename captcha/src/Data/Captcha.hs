@@ -29,6 +29,7 @@ import           Servant.Swagger.Internal (addParam)
 
 data CheckCaptcha
 
+{-# INLINE hCaptcha #-}
 hCaptcha :: HeaderName
 hCaptcha = "X-CAPTCHA"
 
@@ -46,6 +47,7 @@ instance HasSwagger api => HasSwagger (CheckCaptcha :> api) where
   toSwagger _ = toSwagger (Proxy @api)
     & addParam param
     where
+      {-# INLINE param #-}
       param = mempty
         & Data.Swagger.name .~ "X-CAPTCHA"
         & required ?~ True

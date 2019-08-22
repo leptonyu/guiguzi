@@ -64,8 +64,10 @@ buildRedis = do
   if enabled
     then do
       ci    <- require "redis"
-      logInfo "Redis loading"
+      logInfo "Load redis"
       rd    <- REDIS <$> bracket (liftIO $ connect ci) (liftIO . disconnect)
       buildHealth ("redis", check rd)
       return rd
-    else return (throw RedisNotInitializedException)
+    else do
+      logInfo "Disable redis module"
+      return (throw RedisNotInitializedException)

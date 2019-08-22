@@ -28,4 +28,5 @@ actuatorRefresh ac = do
   reload <- askReload
   newActuator ac "refresh" (Proxy @RefreshEndpoint) (liftIO $ go <$> reload)
   where
+    {-# INLINE go #-}
     go ReloadResult{..} = Refresh{..}

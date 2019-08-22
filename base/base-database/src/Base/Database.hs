@@ -49,13 +49,15 @@ buildDatabase = do
   if enabled
     then do
       dbtype   <- fromMaybe SQLite <$> require "datasource.type"
-      logInfo $ "Loading database " <> T.pack (show dbtype)
+      logInfo $ "Load database " <> T.pack (show dbtype)
       (db, ck) <- case dbtype of
         PostgreSQL -> require "datasource.postgresql" >>= buildPostresql
         _          -> require "datasource.sqlite"     >>= buildSqlite
       buildHealth ck
       return db
-    else return $ throw DatabaseNotInitializedException
+    else do
+      logInfo "Disable database module"
+      return $ throw DatabaseNotInitializedException
 
 data DBE = DBE
   { dbelog :: !Boots.LogFunc

@@ -81,7 +81,7 @@ data HttpServer = HttpServer
   , sport :: !(Maybe Word16)
   , stags :: ![Text]
   , smeta :: !(HM.HashMap Text Text)
-  , chk   :: ServiceCheck
+  , chk   :: !ServiceCheck
   }
 
 newServer :: HttpServer -> ServiceDef
@@ -170,11 +170,12 @@ runConsul _ _ (HttpClient mg) cma = do
       mgn              = case token of
         Just t -> mg { managerModifyRequest = \req -> return req { requestHeaders = ("X-Consul-Token", t) : requestHeaders req }}
         _      -> mg
-  m   <- liftIO $ newManager mgn
-  v   <- liftIO $ runClientM cma (ClientEnv m url Nothing)
-  case v of
-    Left  e -> throwM e
-    Right a -> return a
+  liftIO $ do
+    m <- newManager mgn
+    v <- runClientM cma (ClientEnv m url Nothing)
+    case v of
+      Left  e -> throwM e
+      Right a -> return a
 
 consulServer pm p hc = hoistClient api (runConsul pm p hc) (client api)
 
@@ -187,13 +188,6 @@ data ConsulConfig = ConsulConfig
   , url      :: BaseUrl
   }
 
-instance FromProp m BaseUrl where
-  fromProp = BaseUrl
-    <$> "schema" .?= Http
-    <*> "host"   .?= "127.0.0.1"
-    <*> "port"   .?= 8500
-    <*> "path"   .?= ""
-
 instance FromProp m ConsulConfig where
   fromProp = ConsulConfig
     <$> "meta"
@@ -201,11 +195,16 @@ instance FromProp m ConsulConfig where
     <*> "token"
     <*> "interval" .?= "10s"
     <*> "deregister-critical-service-after" .?= "30m"
-    <*> fromProp
+    <*> (BaseUrl
+      <$> "schema" .?= Http
+      <*> "host"   .?= "127.0.0.1"
+      <*> "port"   .?= 8500
+      <*> "path"   .?= "")
 
 instance FromProp m Scheme where
   fromProp = readEnum (go.toLower)
     where
+      {-# INLINE go #-}
       go "http"  = Right Http
       go "https" = Right Https
       go _       = Left "unkown schema"

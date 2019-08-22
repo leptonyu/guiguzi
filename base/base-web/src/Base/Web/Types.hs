@@ -98,7 +98,6 @@ runWeb = do
       serveWarp WebConfig{..} = runSettings
         $ defaultSettings
         & setPort (fromIntegral port)
-        & setHost (fromString hostname)
         & setOnExceptionResponse whenException
         & setOnException (logException context . maybe L.empty vault)
   SwaggerConfig{..}      <- require "swagger"

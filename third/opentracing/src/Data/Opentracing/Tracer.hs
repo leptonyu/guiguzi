@@ -32,6 +32,7 @@ newSpan t name Trace{..} = do
   s <- SpanRef <$> go rf context
   return Trace { spans = s, .. }
   where
+    {-# INLINE go #-}
     go references SpanContext{..} = do
       let finishTime = Nothing
           tags       = HM.empty

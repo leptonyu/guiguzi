@@ -13,6 +13,7 @@ executables:
     dependencies:
     - base-main
     - base-redis
+    - base-database
     - boots-app
     - microlens
     - servant-server

@@ -22,6 +22,7 @@ buildConsul
   => Factory n env env
 buildConsul = do
   b  <- fromMaybe False <$> require "consul.discovery.enabled"
+  unless   b $ logInfo "Disable consul discovery module"
   tryBuild b $ do
     env <- ask
     let AppEnv{..}    = view askApp env

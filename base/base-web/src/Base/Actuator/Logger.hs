@@ -18,7 +18,7 @@ newtype LogInfo = LogInfo
   { level :: Text
   } deriving (Show, Generic, ToJSON, FromJSON, ToSchema)
 
-
+{-# INLINE toStr #-}
 toStr :: LogLevel -> Text
 toStr LevelDebug     = "DEBUG"
 toStr LevelInfo      = "INFO"
@@ -26,6 +26,7 @@ toStr LevelWarn      = "WARN"
 toStr LevelError     = "ERROR"
 toStr (LevelOther l) = l
 
+{-# INLINE fromStr #-}
 fromStr :: Text -> LogLevel
 fromStr "debug" = LevelDebug
 fromStr "info"  = LevelInfo

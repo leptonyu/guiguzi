@@ -25,7 +25,7 @@ actuatorHealth ac = do
   liftIO (readMVar ref)
     >>= newActuator ac "health" (Proxy @HealthEndpoint) . liftIO . go
   where
+    {-# INLINE go #-}
     go health = do
       h@Health{..} <- health
       if status == UP then return h else throwM err400 { errBody = encode h }
-

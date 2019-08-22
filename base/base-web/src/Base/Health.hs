@@ -24,6 +24,7 @@ data Health = Health
 
 newtype HealthRef = HealthRef (MVar (IO Health))
 
+{-# INLINE emptyHealth #-}
 emptyHealth :: IO HealthRef
 emptyHealth = do
   let io = return (Health UP Nothing HM.empty)

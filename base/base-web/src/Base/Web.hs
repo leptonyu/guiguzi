@@ -18,6 +18,8 @@ import           Base.Metrics
 import           Base.Middleware.Actuator
 import           Base.Middleware.Consul
 import           Base.Middleware.Error
+import           Base.Middleware.Logger
+import           Base.Middleware.SplitRandom
 import           Base.Middleware.Trace
 import           Base.Web.Swagger
 import           Base.Web.Types
@@ -29,9 +31,11 @@ import           Servant
 import           Servant.Server.Internal
 import           Servant.Swagger
 
+{-# INLINE toWeb #-}
 toWeb :: (HasLogger cxt, HasVault cxt cxt) => Web IO cxt -> Web (App cxt) cxt
 toWeb Web{..} = Web{ nature = runVault context, ..}
 
+{-# INLINE runVaultInDelayedIO #-}
 runVaultInDelayedIO :: HasVault context context => context -> (Request -> AppT context DelayedIO a) -> DelayedIO a
 runVaultInDelayedIO c ma = do
   req <- DelayedIO ask
@@ -65,5 +69,7 @@ buildWeb proxy server mid = do
     , buildError
     , serveWebWithSwagger True proxy server
     , buildConsul
+    , buildWebLogger
     , buildTrace
+    , buildSplitRandom
     ] >>> runWeb

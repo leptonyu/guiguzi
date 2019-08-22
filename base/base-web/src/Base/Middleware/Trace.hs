@@ -45,11 +45,8 @@ buildTrace = do
           return $ Trace spc { traceId = htid } NoSpan
       let nm = decodeUtf8 (requestMethod req) <> " /" <> T.intercalate "/" (pathInfo req)
       runWithTrace nm nspc
-        $ \Trace{..} -> do
-          let req1 = req {vault = addTrace (f spans $ traceId context) logFunc $ vault req }
-          app req1 $ \res -> do
-            toLog logFunc req1 (responseStatus res) Nothing
-            resH $ mapResponseHeaders (\hs -> (hTraceId, traceId context):(hSpanId, r spans):hs) res
+        $ \Trace{..} -> app req {vault = addTrace (f spans $ traceId context) logFunc $ vault req }
+        $ resH . mapResponseHeaders (\hs -> (hTraceId, traceId context):(hSpanId, r spans):hs)
     where
       {-# INLINE f #-}
       f NoSpan      _   = Nothing

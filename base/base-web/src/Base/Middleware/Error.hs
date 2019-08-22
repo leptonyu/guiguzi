@@ -6,6 +6,7 @@ import           Control.Exception (catch)
 import           Lens.Micro.Extras
 import           Network.Wai       (vault)
 
+{-# INLINE buildError #-}
 buildError
   :: (HasWeb m cxt env, HasVault cxt cxt, MonadIO n, HasLogger cxt)
   => Factory n env env

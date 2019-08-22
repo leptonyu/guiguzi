@@ -46,6 +46,8 @@ library:
   - Base.Middleware.Trace
   - Base.Middleware.Error 
   - Base.Middleware.Consul
+  - Base.Middleware.Logger
+  - Base.Middleware.SplitRandom
   
   - Base.Actuator.Metrics
   - Base.Actuator.Health

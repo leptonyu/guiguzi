@@ -12,7 +12,7 @@ packages:
 - captcha
 extra-deps:
 - git: https://github.com/leptonyu/boots.git
-  commit: 6fc088140b4cb95d9fb776b78e58f9774617ab0b
+  commit: 94dc45f6132375b1fa5b2aa884a58f91a923bf26
   subdirs:
   - boots
   - boots-app

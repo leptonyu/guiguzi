@@ -22,6 +22,7 @@ dependencies:
   - servant-server
   - servant-swagger
   - servant-swagger-ui
+  - splitmix
   - swagger2
   - text
   - unordered-containers

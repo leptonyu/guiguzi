@@ -4,12 +4,14 @@ import           Base.Actuator
 import           Base.Metrics
 import           Base.Web.Types
 import           Boots
-import           Control.Exception      (SomeException, catch, throw)
+import           Control.Monad
 import qualified Data.HashMap.Strict    as HM
 import qualified Data.Map.Strict        as M
 import           Data.Proxy
 import           Data.Text              (Text, pack)
 import           Lens.Micro.Extras
+import           Network.HTTP.Types
+import           Network.Wai
 import           Servant
 import           System.Metrics
 import qualified System.Metrics.Counter as Counter
@@ -36,8 +38,10 @@ actuatorMetrics ac = do
   mconcat
     [ buildMiddleware
       $ \app req resH -> app req
-      $ \res -> Counter.inc requests
-        >> resH res `catch` (\(e :: SomeException) -> Counter.inc req_fail >> throw e)
+      $ \res -> do
+        Counter.inc requests
+        when (statusCode (responseStatus res) >= 400) $ Counter.inc req_fail
+        resH res
     , newActuator ac "metrics" (Proxy @MetricsEndpoint) (liftIO $ go store)
     ]
   where

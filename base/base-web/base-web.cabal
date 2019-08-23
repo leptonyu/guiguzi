@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7a39dae26744463b50c17959626baf59c4b0874ddd0cee811e1e8f856158df99
+-- hash: 25bacc9ec10971e45296411e752235c2f33a458ff2d6dfce459f387ffc0c26b0
 
 name:           base-web
 version:        0
@@ -60,6 +60,7 @@ library
     , servant-server
     , servant-swagger
     , servant-swagger-ui
+    , splitmix
     , swagger2
     , text
     , unordered-containers
@@ -117,6 +118,7 @@ test-suite spec
     , servant-server
     , servant-swagger
     , servant-swagger-ui
+    , splitmix
     , swagger2
     , text
     , unordered-containers

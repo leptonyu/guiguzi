@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2be58a3084678377b693402b118d1d35e74a103967a40e5245338a83687b5ee9
+-- hash: fe598ffac908d4a9acb78314c0b9e44d483697c02e661cd6b46f191e8a95d862
 
 name:           main
 version:        0
@@ -22,15 +22,15 @@ executable guiguzi
       Paths_main
   hs-source-dirs:
       ./.
-  default-extensions: RankNTypes TypeOperators FlexibleInstances OverloadedStrings MultiParamTypeClasses TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
+  default-extensions: RankNTypes TypeOperators FlexibleInstances OverloadedStrings MultiParamTypeClasses TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts KindSignatures PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures -rtsopts -threaded -with-rtsopts=-K1K
   build-depends:
       base >=4.11 && <5
     , base-database
-    , base-main
     , base-redis
     , boots-app
+    , boots-cloud
+    , boots-web
     , captcha
-    , microlens
     , servant-server
   default-language: Haskell2010

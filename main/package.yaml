@@ -11,10 +11,9 @@ executables:
     ghc-options: -rtsopts -threaded -with-rtsopts=-K1K
     main: Main.hs
     dependencies:
-    - base-main
     - base-redis
-    - base-database
     - boots-app
-    - microlens
+    - boots-web
+    - boots-cloud
     - servant-server
     - captcha

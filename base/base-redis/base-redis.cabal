@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 11e84b65df3524ee32b776aa9cf71fd10b0d60d5fd162167baf7fb782d46bcb1
+-- hash: d01b9bcd4456ba64c3b94d6063877256d784f266555dd01dbc8c6589e11f3a0b
 
 name:           base-redis
 version:        0
@@ -23,14 +23,12 @@ library
       Paths_base_redis
   hs-source-dirs:
       src
-  default-extensions: RankNTypes TypeOperators FlexibleInstances OverloadedStrings MultiParamTypeClasses TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts DeriveGeneric DeriveAnyClass KindSignatures PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
+  default-extensions: RankNTypes TypeOperators FlexibleInstances OverloadedStrings MultiParamTypeClasses TypeApplications RecordWildCards ScopedTypeVariables DuplicateRecordFields AllowAmbiguousTypes DataKinds FlexibleContexts KindSignatures PartialTypeSignatures TupleSections ExistentialQuantification FunctionalDependencies
   ghc-options: -Wall -fno-warn-orphans -fno-warn-missing-signatures
   build-depends:
       base >=4.11 && <5
-    , base-web
     , boots-app
-    , data-default
+    , boots-web
     , hedis
-    , microlens
     , salak
   default-language: Haskell2010

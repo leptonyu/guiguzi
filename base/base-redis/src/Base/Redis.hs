@@ -1,14 +1,10 @@
 module Base.Redis where
 
-import           Base.Health
 import           Boots
 import           Control.Exception (Exception, throw)
-import           Data.Default
 import           Data.Maybe
 import           Data.Word
 import           Database.Redis
-import           Lens.Micro
-import           Lens.Micro.Extras
 import           Salak
 
 instance Default ConnectInfo where
@@ -45,6 +41,9 @@ class HasRedis env where
 instance HasRedis REDIS where
   askRedis = id
 
+instance HasRedis ext => HasRedis (Env ext) where
+  askRedis = askExt . askRedis
+
 instance (HasRedis env, MonadIO m) => MonadRedis (AppT env m) where
   liftRedis ra = do
     REDIS c <- asks (view askRedis)
@@ -65,8 +64,8 @@ buildRedis = do
     then do
       ci    <- require "redis"
       logInfo "Load redis"
-      rd    <- REDIS <$> bracket (liftIO $ connect ci) (liftIO . disconnect)
-      buildHealth ("redis", check rd)
+      rd    <- REDIS <$> produce (liftIO $ connect ci) (liftIO . disconnect)
+      registerHealth "redis" (check rd)
       return rd
     else do
       logInfo "Disable redis module"

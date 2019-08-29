@@ -6,25 +6,25 @@ extra-source-files:
 
 dependencies:
   - base >= 4.11 && < 5
+  - aeson
+  - base-redis
+  - base64-bytestring
+  - boots-app
+  - boots-web
+  - bytestring
+  - file-embed-lzma
+  - FontyFruity
+  - hedis
+  - http-types
+  - JuicyPixels
+  - microlens
+  - Rasterific
   - servant-server
   - servant-swagger
-  - base-web
-  - boots-app
-  - wai
-  - http-types
-  - swagger2
-  - microlens
-  - text
-  - aeson
-  - base64-bytestring
-  - base-redis
-  - hedis
-  - bytestring
-  - JuicyPixels
-  - Rasterific
-  - FontyFruity
   - splitmix
-  - file-embed-lzma
+  - swagger2
+  - text
+  - wai
 
 library:
   source-dirs: src

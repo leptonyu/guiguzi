@@ -34,10 +34,10 @@ newtype RabbitmqChannel = RabbitmqChannel Channel
 buildRabbitmq :: (MonadMask n, MonadIO n, HasSalak env) => Factory n env Rabbitmq
 buildRabbitmq = do
   opts <- require "rabbitmq"
-  conn <- bracket (liftIO $ openConnection'' opts) (liftIO . closeConnection)
+  conn <- produce (liftIO $ openConnection'' opts) (liftIO . closeConnection)
   return (Rabbitmq conn)
 
 buildRabbitmqChannel :: (MonadMask n, MonadIO n) => Rabbitmq -> Factory n env RabbitmqChannel
 buildRabbitmqChannel (Rabbitmq conn) = do
-  ch <- bracket (liftIO $ openChannel conn) (liftIO . closeChannel)
+  ch <- produce (liftIO $ openChannel conn) (liftIO . closeChannel)
   return (RabbitmqChannel ch)

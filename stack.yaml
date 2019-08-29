@@ -1,25 +1,23 @@
-resolver: nightly-2019-08-07
+resolver: nightly-2019-08-26
 packages:
-- base/base-web
-- base/base-client
 - base/base-database
 - base/base-redis
 - base/base-rabbitmq
-- base/base-main
-- third/opentracing
-- third/consul
 - main
 - captcha
+
 extra-deps:
 - git: https://github.com/leptonyu/boots.git
-  commit: 94dc45f6132375b1fa5b2aa884a58f91a923bf26
+  commit: 448c5b994949d5790d523c623248244e9970f5cb
   subdirs:
   - boots
   - boots-app
-- salak-0.3.5.1
-- salak-yaml-0.3.5.1
+  - boots-web
+  - boots-cloud
 - warp-3.3.0
 - http2-2.0.3
+- salak-0.3.5.3
+- salak-yaml-0.3.5.3
 nix:
   packages:
   - zlib

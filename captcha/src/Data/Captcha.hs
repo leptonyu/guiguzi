@@ -1,30 +1,26 @@
+{-# LANGUAGE DeriveGeneric        #-}
 {-# LANGUAGE TypeFamilies         #-}
 {-# LANGUAGE UndecidableInstances #-}
 module Data.Captcha where
 
 import           Base.Redis
-import           Base.Web
 import           Boots                    hiding (name, version)
-import           Control.Monad
+import           Boots.Web
 import           Data.Aeson
 import qualified Data.ByteString.Base64   as B64
 import qualified Data.ByteString.Char8    as B
 import qualified Data.ByteString.Lazy     as BL
 import           Data.Captcha.Internal
-import           Data.String
 import           Data.Swagger             hiding (HeaderName)
-import           Data.Swagger.Schema      (ToSchema)
 import           Data.Text                (Text)
 import           Data.Text.Encoding
 import qualified Database.Redis           as R
 import           GHC.Generics
 import           Lens.Micro
-import           Lens.Micro.Extras
 import           Network.HTTP.Types
 import           Network.Wai.Internal
 import           Servant
 import           Servant.Server.Internal
-import           Servant.Swagger
 import           Servant.Swagger.Internal (addParam)
 
 data CheckCaptcha
@@ -33,11 +29,12 @@ data CheckCaptcha
 hCaptcha :: HeaderName
 hCaptcha = "X-CAPTCHA"
 
-instance (HasLogger context, HasRedis context, HasVault context context, HasServer api '[context])
-  => HasServer (CheckCaptcha :> api) '[context] where
+instance (HasLogger env, HasWeb context env, HasRedis env, HasServer api context)
+  => HasServer (CheckCaptcha :> api) context where
   type ServerT (CheckCaptcha :> api) m = ServerT api m
-  route _ c s = route (Proxy @api) c $ s `addMethodCheck` runVaultInDelayedIO @context (getContextEntry c) go
+  route _ c s = route (Proxy @api) c $ s `addMethodCheck` runContext c (lift ask >>= go)
     where
+      go :: Request -> AppT env DelayedIO ()
       go Request{..} = case lookup hCaptcha requestHeaders of
         Just captcha -> checkCaptcha captcha
         _            -> throwM err401 { errBody = "Captcha invalid"}
@@ -63,7 +60,7 @@ instance ToSchema Captcha
 
 instance ToJSON Captcha
 
-type CaptchaEndpoint = SwaggerTag "captcha" "Captcha Endpoint" :>"captcha" :> Post '[JSON] Captcha
+type CaptchaEndpoint = "captcha" :> Post '[JSON] Captcha
 
 checkCaptcha :: (HasLogger context, HasRedis context, MonadIO m, MonadThrow m) => B.ByteString -> AppT context m ()
 checkCaptcha captcha = do
@@ -72,10 +69,10 @@ checkCaptcha captcha = do
     Left  r -> logError (fromString $ show r) >> throwM err401 { errBody = "Captcha invalid" }
     Right i -> when (i == 0) $ throwM err401 { errBody = "Captcha invalid" }
 
-captchaServer :: forall env. (HasApp env env, HasRedis env) => App env Captcha
+captchaServer :: forall env. (HasApp env, HasRedis env, HasRandom env) => App env Captcha
 captchaServer = do
-  (AppEnv{..} :: AppEnv env) <- asks (view askApp)
-  cid           <- rand64 randSeed
+  AppEnv{..}    <- asks (view askApp)
+  cid           <- hex64 <$> nextW64
   (code, body1) <- liftIO $ newCaptcha font
   let body  = ("image/png;base64 " <>) $ decodeUtf8 $ B64.encode $ BL.toStrict body1
   _ <- R.liftRedis $ R.setex ("c:" <> B.pack cid <> ":" <> B.pack code) 300 "true"

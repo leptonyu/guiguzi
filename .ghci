@@ -1,6 +1,3 @@
 import System.Environment
-setEnv "logging.level" "info"
-setEnv "logging.file" ".stack-work/1.log"
-setEnv "consul.discovery.enabled" "false"
+setEnv "logging.level" "trace"
 setEnv "redis.enabled" "false"
-:load Main

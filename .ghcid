@@ -1,1 +1,1 @@
---command "stack ghci --profile --no-load --ghci-options=-fno-break-on-exception --ghci-options=-fno-break-on-error --ghci-options=-v1 --ghci-options=-ferror-spans --ghci-options=-j --main-is main:exe:guiguzi" --reload base --restart common.yaml --restart **/**/package.yaml --test main -l
+--command "stack ghci --ghci-options=-fno-break-on-exception --ghci-options=-fno-break-on-error --ghci-options=-v1 --ghci-options=-ferror-spans --ghci-options=-j --main-is main:exe:guiguzi" --reload base --restart common.yaml --restart **/**/package.yaml --test main

@@ -5,11 +5,9 @@ name:                base-redis
 dependencies:
   - base >= 4.11 && < 5
   - boots-app
-  - salak
-  - microlens
-  - data-default
+  - boots-web
   - hedis
-  - base-web
+  - salak
 
 
 library:

@@ -5,18 +5,18 @@ name:                base-database
 dependencies:
   - base >= 4.11 && < 5
   - boots-app
-  - salak
+  - boots-web
+  - bytestring
   - microlens
+  - monad-logger
+  - mtl
   - persistent
-  - resource-pool
   - persistent-postgresql
   - persistent-sqlite
-  - monad-logger
-  - unliftio-core
-  - bytestring
+  - resource-pool
+  - salak
   - text
-  - base-web
-  - mtl
+  - unliftio-core
 
 
 library:

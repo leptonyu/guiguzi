@@ -20,8 +20,8 @@
     - AllowAmbiguousTypes
     - DataKinds
     - FlexibleContexts
-    - DeriveGeneric
-    - DeriveAnyClass
+    # - DeriveGeneric
+    # - DeriveAnyClass
     - KindSignatures
     - PartialTypeSignatures
     - TupleSections

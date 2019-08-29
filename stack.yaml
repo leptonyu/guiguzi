@@ -6,9 +6,14 @@ packages:
 - main
 - captcha
 
+# - ../boots/boots
+# - ../boots/boots-app
+# - ../boots/boots-web
+# - ../boots/boots-cloud
+
 extra-deps:
 - git: https://github.com/leptonyu/boots.git
-  commit: 448c5b994949d5790d523c623248244e9970f5cb
+  commit: 9bd327be194c14135240ca7eadb7cfbeeab18420
   subdirs:
   - boots
   - boots-app

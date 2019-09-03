@@ -29,12 +29,12 @@ data CheckCaptcha
 hCaptcha :: HeaderName
 hCaptcha = "X-CAPTCHA"
 
-instance (HasLogger env, HasWeb context env, HasRedis env, HasServer api context)
+instance (HasRedis env, HasWeb context env, HasServer api context)
   => HasServer (CheckCaptcha :> api) context where
   type ServerT (CheckCaptcha :> api) m = ServerT api m
-  route _ c s = route (Proxy @api) c $ s `addMethodCheck` runContext c (lift ask >>= go)
+  route _ c s = route (Proxy @api) c $ s `addMethodCheck` runAppT c (lift ask >>= go)
     where
-      go :: Request -> AppT env DelayedIO ()
+      go :: Request -> AppT (Context context) DelayedIO ()
       go Request{..} = case lookup hCaptcha requestHeaders of
         Just captcha -> checkCaptcha captcha
         _            -> throwM err401 { errBody = "Captcha invalid"}
@@ -62,16 +62,15 @@ instance ToJSON Captcha
 
 type CaptchaEndpoint = "captcha" :> Post '[JSON] Captcha
 
-checkCaptcha :: (HasLogger context, HasRedis context, MonadIO m, MonadThrow m) => B.ByteString -> AppT context m ()
+checkCaptcha :: (HasRedis env, HasWeb context env, MonadIO m, MonadThrow m) => B.ByteString -> AppT (Context context) m ()
 checkCaptcha captcha = do
   v <- R.liftRedis $ R.del ["c:" <> captcha]
   case v of
     Left  r -> logError (fromString $ show r) >> throwM err401 { errBody = "Captcha invalid" }
     Right i -> when (i == 0) $ throwM err401 { errBody = "Captcha invalid" }
 
-captchaServer :: forall env. (HasApp env, HasRedis env, HasRandom env) => App env Captcha
+captchaServer :: forall env. (HasRedis env, HasRandom env) => App env Captcha
 captchaServer = do
-  AppEnv{..}    <- asks (view askApp)
   cid           <- hex64 <$> nextW64
   (code, body1) <- liftIO $ newCaptcha font
   let body  = ("image/png;base64 " <>) $ decodeUtf8 $ B64.encode $ BL.toStrict body1

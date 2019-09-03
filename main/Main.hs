@@ -9,12 +9,21 @@ import           Data.Captcha
 import           Paths_main
 import           Servant
 
-type AppE = App (Env REDIS)
+type AppE = App (AppEnv ABC)
+
+
+data ABC = ABC
+  { redis :: REDIS
+  , hello :: ()
+  }
+
+instance HasRedis ABC where
+  askRedis = lens redis (\x y -> x {redis = y})
 
 type API =
   CaptchaEndpoint
   :<|> "hello" :> Get '[PlainText] String
-  :<|> "hellox" :> Get '[PlainText] String
+  :<|> CheckCaptcha :> "hellox" :> Get '[PlainText] String
 
 apiServer = captchaServer :<|> demo :<|> return "Hello"
 
@@ -26,8 +35,13 @@ demo =  do
   -- logError "error"
   return "Hello"
 
-main = bootWebEnv "main" Paths_main.version buildRedis $ do
+main = bootWebEnv "main" Paths_main.version go $ do
   buildConsul
   tryServeWithSwagger True Proxy (Proxy @API) apiServer
+  where
+    go = do
+      redis <- buildRedis
+      let hello = ()
+      return ABC{..}
 
 

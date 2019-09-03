@@ -4,6 +4,6 @@ packages:
   base/base-database
   base/base-redis
   base/base-rabbitmq
-  main
 
-  captcha
+  captcha-api
+  captcha-server

@@ -45,8 +45,8 @@ ENTRYPOINT ["/$NAME"]
 EOF
 }
 
-NAME=guiguzi
-VERSION=`stack ls dependencies --no-external | grep "^main " | awk '{print $2}'`
+NAME=captcha-server
+VERSION=`stack ls dependencies --no-external | grep "^captcha-server " | awk '{print $2}'`
 BIN=.stack-work/bin
 [[ -d "$BIN" ]] && rm -rf "$BIN"
 stack install --local-bin-path=$BIN --ghc-options='-O2 -threaded' $@ \

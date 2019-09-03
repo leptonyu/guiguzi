@@ -1,3 +1,4 @@
+{-# LANGUAGE UndecidableInstances #-}
 module Base.Database where
 
 import           Boots
@@ -66,8 +67,10 @@ instance HasLogger DBE where
 instance HasDataSource DBE where
   askDataSource = lens (DB . dbepoo) (\x y -> x {dbepoo = dbConn y})
 
-instance HasDataSource ext => HasDataSource (Env ext) where
+instance HasDataSource ext => HasDataSource (AppEnv ext) where
   askDataSource = askExt . askDataSource
+instance HasWeb context DB => HasDataSource (Context context) where
+  askDataSource = askWeb . askDataSource
 
 check :: Boots.LogFunc -> Pool SqlBackend -> IO HealthStatus
 check l p = runAppT (DBE l p) (runTrans $ return UP)

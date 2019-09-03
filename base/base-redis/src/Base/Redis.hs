@@ -1,6 +1,8 @@
+{-# LANGUAGE UndecidableInstances #-}
 module Base.Redis where
 
 import           Boots
+import           Boots.Web
 import           Control.Exception (Exception, throw)
 import           Data.Maybe
 import           Data.Word
@@ -41,8 +43,11 @@ class HasRedis env where
 instance HasRedis REDIS where
   askRedis = id
 
-instance HasRedis ext => HasRedis (Env ext) where
+instance HasRedis ext => HasRedis (AppEnv ext) where
   askRedis = askExt . askRedis
+
+instance (HasRedis env, HasWeb context env) => HasRedis (Context context) where
+  askRedis = askWeb . askRedis
 
 instance (HasRedis env, MonadIO m) => MonadRedis (AppT env m) where
   liftRedis ra = do

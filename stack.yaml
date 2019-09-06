@@ -19,6 +19,9 @@ extra-deps:
 #   - boots-app
 #   - boots-web
 #   - boots-cloud
+- boots-app-0.2.0.1
+- boots-web-0.2.0.1
+- boots-cloud-0.2
 - warp-3.3.0
 - http2-2.0.3
 nix:

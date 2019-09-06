@@ -1,4 +1,4 @@
-resolver: nightly-2019-09-02
+resolver: nightly-2019-09-04
 packages:
 - base/base-database
 - base/base-redis
@@ -9,21 +9,16 @@ packages:
 - captcha-api
 - captcha-server
 
-# - ../boots/boots
-# - ../boots/boots-app
-# - ../boots/boots-web
-# - ../boots/boots-cloud
-
 extra-deps:
 - git: https://github.com/leptonyu/captcha.git
-  commit: e25151454aeada025502306498ef26b98587ae0b
-- git: https://github.com/leptonyu/boots.git
-  commit: 94035839b77f0f1e3a175a9b36aa3555da1e3efc
-  subdirs:
-  - boots
-  - boots-app
-  - boots-web
-  - boots-cloud
+  commit: bad8a4f2a7e49a9fce3d39867eabd3a704a6ddea
+# - git: https://github.com/leptonyu/boots.git
+#   commit: 94035839b77f0f1e3a175a9b36aa3555da1e3efc
+#   subdirs:
+#   - boots
+#   - boots-app
+#   - boots-web
+#   - boots-cloud
 - warp-3.3.0
 - http2-2.0.3
 nix:

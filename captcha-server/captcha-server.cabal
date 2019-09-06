@@ -21,15 +21,21 @@ executable captcha-server
   main-is:             Main.hs
   other-modules:
     Server.Captcha
+    Paths_captcha_server
   -- other-extensions:
   build-depends:       
       base >=4.12 && <4.13
     , captcha-api
+    , captcha
+    , text
     , servant-server
     , servant-swagger
     , swagger2
     , wai
     , http-types
     , aeson
+    , boots-app
+    , boots-web
+    , microlens
   hs-source-dirs:      src
   default-language:    Haskell2010
